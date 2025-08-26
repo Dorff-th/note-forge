@@ -1,0 +1,52 @@
+### Java ###
+*.class
+*.war
+*.ear
+*.jar
+
+### Spring Boot ###
+# 로그 파일
+*.log
+
+# 민감 설정 파일
+forgebackend/src/main/resources/application.yml
+forgebackend/src/main/resources/application-*.yml
+
+# 임시 빌드 파일
+/target/
+/build/
+/out/
+
+### Gradle ###
+.gradle
+build/
+
+### Maven ###
+.mvn/
+!/.mvn/wrapper/maven-wrapper.jar
+
+### IntelliJ IDEA ###
+.idea/
+*.iml
+*.iws
+*.ipr
+
+### VSCode ###
+.vscode/
+
+### Node.js ###
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+.pnpm-lock.yaml
+
+### OS ###
+.DS_Store
+Thumbs.db
+
+### Others ###
+.env

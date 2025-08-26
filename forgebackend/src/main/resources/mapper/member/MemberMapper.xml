@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dev.noteforge.knowhub.admin.member.mapper.AdminMemberMapper">
+
+    <select id="searchMembers" parameterType="MemberSearchDTO" resultType="MemberResultDTO">
+        SELECT
+        id, username, email, nickname, role, status, deleted, created_at, updated_at
+        FROM member
+        WHERE 1=1
+        <if test="email != null and email != ''">
+            AND email LIKE CONCAT('%', #{email}, '%')
+        </if>
+        <if test="nickname != null and nickname != ''">
+            AND nickname LIKE CONCAT('%', #{nickname}, '%')
+        </if>
+        <if test="role != null and role != ''">
+            AND role = #{role}
+        </if>
+
+        <!-- 활성/비활성 탭 분기 -->
+        <choose>
+            <when test="tab == 'active'">
+                AND status = 'ACTIVE'
+                AND deleted = 0
+            </when>
+            <when test="tab == 'inactive'">
+                AND (status = 'INACTIVE' OR deleted = 1)
+            </when>
+        </choose>
+
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 회원 상세 조회 -->
+    <select id="findById" resultType="MemberDetailDTO">
+        SELECT id,
+        username,
+        email,
+        nickname,
+        role,
+        status,
+        deleted,
+        created_at,
+        updated_at
+        FROM member
+        WHERE id = #{id}
+    </select>
+
+    <!-- 상태 & 탈퇴 여부 변경 -->
+    <!-- 상태 변경 -->
+    <update id="updateStatus">
+        UPDATE member
+        SET status = #{status},
+        updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 탈퇴 여부 변경 -->
+    <update id="updateDeleted">
+        UPDATE member
+        SET deleted = #{deleted},
+        updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+
+</mapper>
