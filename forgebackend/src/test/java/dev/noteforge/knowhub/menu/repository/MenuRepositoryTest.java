@@ -1,5 +1,6 @@
 package dev.noteforge.knowhub.menu.repository;
 
+import dev.noteforge.knowhub.common.enums.RoleType;
 import dev.noteforge.knowhub.menu.domain.Menu;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ class MenuRepositoryTest {
         Menu menu = Menu.builder()
                 .name("회원관리")
                 .path("/admin/members")
-                .role(Menu.Role.ADMIN)
+                .role(RoleType.ADMIN)
                 .sortOrder(1)
                 .build();
 

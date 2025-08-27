@@ -11,9 +11,5 @@ import java.util.List;
 
 public interface MenuRepository extends JpaRepository<Menu, Long> {
 
-    // 특정 권한(role)에 해당하는 모든 메뉴 조회
-    List<Menu> findByIsActiveTrueOrderBySortOrderAsc();
-
-    List<Menu> findByRoleAndIsActiveTrueOrderBySortOrderAsc(RoleType role);
 }
 

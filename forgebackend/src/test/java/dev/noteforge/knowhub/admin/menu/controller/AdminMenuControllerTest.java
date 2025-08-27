@@ -1,6 +1,8 @@
 package dev.noteforge.knowhub.admin.menu.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.noteforge.knowhub.common.enums.RoleType;
+import dev.noteforge.knowhub.member.enums.Role;
 import dev.noteforge.knowhub.menu.domain.Menu;
 import dev.noteforge.knowhub.menu.dto.MenuRequest;
 import dev.noteforge.knowhub.menu.repository.MenuRepository;
@@ -47,7 +49,7 @@ class AdminMenuControllerTest {
         MenuRequest request = MenuRequest.builder()
                 .name("회원관리")
                 .path("/admin/members")
-                .role(Menu.Role.ADMIN)
+                .role(RoleType.ADMIN)
                 .sortOrder(1)
                 .build();
 
@@ -64,7 +66,7 @@ class AdminMenuControllerTest {
         menuRepository.save(Menu.builder()
                 .name("홈")
                 .path("/")
-                .role(Menu.Role.PUBLIC)
+                .role(RoleType.PUBLIC)
                 .sortOrder(1)
                 .build());
 
@@ -78,14 +80,14 @@ class AdminMenuControllerTest {
         Menu menu = menuRepository.save(Menu.builder()
                 .name("OldName")
                 .path("/old")
-                .role(Menu.Role.ADMIN)
+                .role(RoleType.ADMIN)
                 .sortOrder(1)
                 .build());
 
         MenuRequest update = MenuRequest.builder()
                 .name("NewName")
                 .path("/new")
-                .role(Menu.Role.ADMIN)
+                .role(RoleType.ADMIN)
                 .sortOrder(2)
                 .build();
 
@@ -101,7 +103,7 @@ class AdminMenuControllerTest {
         Menu menu = menuRepository.save(Menu.builder()
                 .name("삭제대상")
                 .path("/delete")
-                .role(Menu.Role.ADMIN)
+                .role(RoleType.ADMIN)
                 .sortOrder(1)
                 .build());
 

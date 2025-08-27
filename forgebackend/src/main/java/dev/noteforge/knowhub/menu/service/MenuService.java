@@ -1,41 +1,31 @@
 package dev.noteforge.knowhub.menu.service;
 
 import dev.noteforge.knowhub.common.enums.RoleType;
-
-import dev.noteforge.knowhub.menu.domain.Menu;
-import dev.noteforge.knowhub.menu.dto.MenuResponse;
-import dev.noteforge.knowhub.menu.repository.MenuRepository;
-import dev.noteforge.knowhub.menu.util.MenuTreeConverter;
+import dev.noteforge.knowhub.menu.dto.MenuTreeDTO;
+import dev.noteforge.knowhub.menu.mapper.MenuMapper;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class MenuService {
+    private final MenuMapper menuMapper;
 
-    private final MenuRepository menuRepository;
+    public List<MenuTreeDTO> getMenusByRole(RoleType roleType) {
+        List<String> roles = new ArrayList<>();
+        roles.add(RoleType.PUBLIC.name()); // "PUBLIC"
 
-    /**
-     * role 조건에 맞는 메뉴 트리를 조회
-     * @param role 요청한 Role (null이면 전체)
-     */
-    public List<MenuResponse> getMenusByRole(RoleType role) {
-        List<Menu> menus;
-
-        if (role == null) {
-            // 전체 메뉴 (활성된 것만)
-            menus = menuRepository.findByIsActiveTrueOrderBySortOrderAsc();
-        } else {
-            // 지정한 Role 이상 접근 가능한 메뉴만 필터링
-            menus = menuRepository.findByRoleAndIsActiveTrueOrderBySortOrderAsc(role);
+        if (roleType == RoleType.USER || roleType == RoleType.ADMIN) {
+            roles.add(RoleType.USER.name());
+        }
+        if (roleType == RoleType.ADMIN) {
+            roles.add(RoleType.ADMIN.name());
         }
 
-        return MenuTreeConverter.buildTree(menus);
+        return menuMapper.getMenuHierarchyByRoles(roles);
     }
 }
+
