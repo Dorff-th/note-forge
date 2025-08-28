@@ -62,5 +62,6 @@ public class Menu {
         this.parentId = parentId;
         this.sortOrder = sortOrder;
         this.updatedAt = LocalDateTime.now();
+        this.isActive = isActive;
     }
 }

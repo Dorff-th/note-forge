@@ -5,6 +5,7 @@ import dev.noteforge.knowhub.menu.dto.MenuRequest;
 import dev.noteforge.knowhub.menu.dto.MenuResponse;
 import dev.noteforge.knowhub.menu.repository.MenuRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AdminMenuService {
 
     private final MenuRepository menuRepository;
@@ -53,8 +55,10 @@ public class AdminMenuService {
 
 
     public void updateMenu(Long id, MenuRequest request) {
+
         Menu menu = menuRepository.findById(id).orElseThrow();
         menu.update(request.getName(), request.getPath(), request.getRole(), request.getParentId(), request.getSortOrder(), request.isActive());
+        menuRepository.save(menu);
     }
 
     public void deleteMenu(Long id) {

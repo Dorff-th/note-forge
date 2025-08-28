@@ -13,6 +13,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class MenuRequest {
     private Long parentId;
     private String name;

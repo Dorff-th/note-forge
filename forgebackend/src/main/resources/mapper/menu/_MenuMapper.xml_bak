@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dev.noteforge.knowhub.menu.mapper.MenuMapper">
+
+    <select id="getMenuHierarchyByRoles" resultType="dev.noteforge.knowhub.menu.dto.MenuTreeDTO">
+        WITH RECURSIVE menu_hierarchy AS (
+        SELECT
+        id,
+        parent_id,
+        name,
+        path,
+        role,
+        sort_order,
+        created_at,
+        updated_at,
+        is_active,
+        CAST(name AS CHAR(500)) AS hierarchy_path,
+        0 AS level
+        FROM menu
+        WHERE is_active = 1
+        AND parent_id IS NULL
+        AND role IN
+        <foreach collection="roles" item="r" open="(" separator="," close=")">
+            #{r}
+        </foreach>
+
+        UNION ALL
+
+        SELECT
+        m.id,
+        m.parent_id,
+        m.name,
+        m.path,
+        m.role,
+        m.sort_order,
+        m.created_at,
+        m.updated_at,
+        m.is_active,
+        CONCAT(mh.hierarchy_path, ' > ', m.name) AS hierarchy_path,
+        mh.level + 1 AS level
+        FROM menu m
+        INNER JOIN menu_hierarchy mh ON m.parent_id = mh.id
+        WHERE m.is_active = 1
+        AND m.role IN
+        <foreach collection="roles" item="r" open="(" separator="," close=")">
+            #{r}
+        </foreach>
+        )
+        SELECT *
+        FROM menu_hierarchy
+        ORDER BY hierarchy_path
+    </select>
+
+</mapper>
