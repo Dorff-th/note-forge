@@ -31,10 +31,26 @@ public class AdminMenuService {
         return MenuResponse.fromEntity(menu);
     }
 
-    public void createMenu(MenuRequest request) {
+    /*public void createMenu(MenuRequest request) {
         Menu menu = new Menu(request.getName(), request.getPath(), request.getRole(), request.getParentId(), request.getSortOrder(), request.isActive());
         menuRepository.save(menu);
+    }*/
+    public Long createMenu(MenuRequest request) {
+        Menu menu = new Menu();
+        menu.setName(request.getName());
+        menu.setPath(request.getPath());
+        menu.setRole(request.getRole());
+        menu.setActive(request.isActive());
+
+        if (request.getParentId() != null) {
+            Menu parent = menuRepository.findById(request.getParentId())
+                    .orElseThrow(() -> new IllegalArgumentException("부모 메뉴를 찾을 수 없습니다."));
+            menu.setParentId(parent.getParentId());
+        }
+
+        return menuRepository.save(menu).getId();
     }
+
 
     public void updateMenu(Long id, MenuRequest request) {
         Menu menu = menuRepository.findById(id).orElseThrow();

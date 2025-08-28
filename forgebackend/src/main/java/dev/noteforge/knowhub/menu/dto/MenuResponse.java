@@ -21,6 +21,7 @@ public class MenuResponse {
     private String name;
     private String path;
     private RoleType role;
+    private boolean active;
     private List<MenuResponse> children = new ArrayList<>();
 
     public static MenuResponse fromEntity(Menu menu) {
@@ -31,6 +32,7 @@ public class MenuResponse {
                 .path(menu.getPath())
                 .role(menu.getRole())
                 .sortOrder(menu.getSortOrder())
+                .active(menu.isActive())
                 .build();
     }
 

@@ -1,8 +1,9 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from '@/pages/auth/LoginForm';
 import AdminLayout from '@/components/layouts/AdminLayout';
-import AdminDashboardPage from '@/pages/admin/AdminDashboardPage';
 import { useAppSelector } from '@store/hooks';
+import AdminDashboardPage from '@/pages/admin/AdminDashboardPage';
+import AdminMenuList from '@/pages/admin/AdminMenuList';
 
 const AppRouter = () => {
   const { token, role } = useAppSelector((state) => state.auth);
@@ -20,6 +21,7 @@ const AppRouter = () => {
         }
       >
         <Route index element={<AdminDashboardPage />} />
+        <Route path="menus" element={<AdminMenuList />} />
       </Route>
 
       {/* USER 라우트 (추후 확장 가능) */}

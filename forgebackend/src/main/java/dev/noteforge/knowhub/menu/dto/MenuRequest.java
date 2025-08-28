@@ -19,5 +19,5 @@ public class MenuRequest {
     private String path;
     private RoleType role;
     private Integer sortOrder;
-    private boolean isActive;
+    private boolean active;
 }

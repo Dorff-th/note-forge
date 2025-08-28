@@ -18,18 +18,28 @@ public class AdminMenuController {
 
     private final AdminMenuService adminMenuService;
 
+    @GetMapping
+    public List<MenuResponse> getAllMenus() {
+        return adminMenuService.getAllMenus();
+    }
+
+    @GetMapping("/{id}")
+    public MenuResponse getMenu(@PathVariable("id") Long id) {
+       return adminMenuService.getMenu(id);
+    }
+
     @PostMapping
     public void createMenu(@RequestBody MenuRequest request) {
         adminMenuService.createMenu(request);
     }
 
     @PutMapping("/{id}")
-    public void updateMenu(@PathVariable Long id, @RequestBody MenuRequest request) {
+    public void updateMenu(@PathVariable("id") Long id, @RequestBody MenuRequest request) {
         adminMenuService.updateMenu(id, request);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteMenu(@PathVariable Long id) {
+    public void deleteMenu(@PathVariable("id") Long id) {
         adminMenuService.deleteMenu(id);
     }
 }

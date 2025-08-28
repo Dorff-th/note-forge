@@ -18,6 +18,14 @@ export const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     store.dispatch(startLoading());
+
+    const state = store.getState();
+    const token = state.auth.token || localStorage.getItem('accessToken');
+
+    if (token) {
+      config.headers?.set('Authorization', `Bearer ${token}`);
+    }
+
     return config;
   },
   (error) => {
