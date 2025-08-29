@@ -46,6 +46,7 @@ export default function AdminMenuList() {
         <thead>
           <tr className="bg-gray-100">
             <th className="px-4 py-2 border">ID</th>
+            <th className="px-4 py-2 border">부모ID</th>
             <th className="px-4 py-2 border">이름</th>
             <th className="px-4 py-2 border">경로</th>
             <th className="px-4 py-2 border">권한</th>

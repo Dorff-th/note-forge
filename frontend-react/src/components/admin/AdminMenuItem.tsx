@@ -11,6 +11,7 @@ export default function AdminMenuItem({ menu, onEdit, onDelete }: AdminMenuItemP
   return (
     <tr key={menu.id} className="hover:bg-gray-50">
       <td className="px-4 py-2 border">{menu.id}</td>
+      <td className="px-4 py-2 border">{menu.parentId}</td>
       <td className="px-4 py-2 border">{menu.name}</td>
       <td className="px-4 py-2 border">{menu.path}</td>
       <td className="px-4 py-2 border">{menu.role}</td>

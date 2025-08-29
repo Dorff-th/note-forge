@@ -6,6 +6,51 @@ import { showToast } from '@store/slices/toastSlice';
 import { useEffect, useState } from 'react';
 import axiosInstance from '@/api/axiosInstance';
 import type { MenuTree } from '@/types/MenuTree';
+import { ChevronRight, ChevronDown } from 'lucide-react';
+
+// ✅ 메뉴 아이템 컴포넌트
+function MenuItem({ menu, depth }: { menu: MenuTree; depth: number }) {
+  const [open, setOpen] = useState(true);
+  const children = menu.children ?? [];
+  const hasChildren = children.length > 0;
+
+  return (
+    <li>
+      <div
+        className={`
+          flex items-center justify-between 
+          p-2 rounded cursor-pointer
+          hover:bg-gray-700
+          ${depth === 0 ? 'font-semibold' : 'text-sm text-gray-300'}
+          ${depth > 0 ? 'pl-6' : 'pl-2'}
+        `}
+        onClick={() => hasChildren && setOpen(!open)}
+      >
+        <Link to={menu.path} className="flex-1">
+          {menu.name}
+        </Link>
+
+        {hasChildren && (
+          <span className="ml-2">
+            {open ? (
+              <ChevronDown size={16} className="text-gray-400" />
+            ) : (
+              <ChevronRight size={16} className="text-gray-400" />
+            )}
+          </span>
+        )}
+      </div>
+
+      {hasChildren && open && (
+        <ul className="mt-1 space-y-1">
+          {children.map((child) => (
+            <MenuItem key={child.id} menu={child} depth={depth + 1} />
+          ))}
+        </ul>
+      )}
+    </li>
+  );
+}
 
 export default function AdminLayout() {
   const dispatch = useDispatch<AppDispatch>();
@@ -30,31 +75,17 @@ export default function AdminLayout() {
     navigate('/login');
   };
 
-  // ✅ depth 기반 재귀 렌더링
-  const renderMenu = (menu: MenuTree, depth = 0) => (
-    <li key={menu.id}>
-      <Link
-        to={menu.path}
-        className={`block hover:bg-gray-700 p-2 rounded cursor-pointer pl-${depth * 4}`}
-      >
-        {menu.name}
-      </Link>
-
-      {menu.children && menu.children.length > 0 && (
-        <ul className="mt-1 space-y-1">
-          {menu.children.map((child) => renderMenu(child, depth + 1))}
-        </ul>
-      )}
-    </li>
-  );
-
   return (
     <div className="flex h-screen">
       {/* 사이드바 */}
       <aside className="w-48 bg-gray-800 text-white p-4">
         <h2 className="text-xl font-bold mb-6">Admin</h2>
         <nav>
-          <ul className="space-y-2">{menus.map((menu) => renderMenu(menu))}</ul>
+          <ul className="space-y-2">
+            {menus.map((menu) => (
+              <MenuItem key={menu.id} menu={menu} depth={0} />
+            ))}
+          </ul>
         </nav>
       </aside>
 
