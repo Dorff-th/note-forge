@@ -2,7 +2,7 @@
 import { cn } from '@/utils/cn'; // tailwind 클래스 병합 유틸 (없으면 그냥 string 이어붙여도 됨)
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'default' | 'outline' | 'destructive';
+  variant?: 'default' | 'outline' | 'destructive' | 'secondary'; // ← 추가;
   size?: 'sm' | 'md' | 'lg';
 }
 
@@ -20,6 +20,7 @@ export function Button({
     default: 'bg-blue-600 text-white hover:bg-blue-700',
     outline: 'border border-gray-300 hover:bg-gray-100',
     destructive: 'bg-red-500 text-white hover:bg-red-600',
+    secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300', // ← 추가
   };
 
   const sizes: Record<typeof size, string> = {

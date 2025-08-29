@@ -38,7 +38,7 @@ public class AdminCategoryController {
 
     //카테고리 수정
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCategory(@PathVariable Long id,
+    public ResponseEntity<?> updateCategory(@PathVariable("id") Long id,
                                             @RequestBody CategoryUpdateRequest request) {
         try {
             Category updated = adminCategoryService.updateCategory(id, request.getName());
@@ -50,7 +50,7 @@ public class AdminCategoryController {
 
     // 카테고리 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCategory(@PathVariable("id") Long id) {
         adminCategoryService.deleteCategory(id);
         return ResponseEntity.noContent().build();
     }
