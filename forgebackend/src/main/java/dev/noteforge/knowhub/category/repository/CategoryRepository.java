@@ -16,4 +16,11 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     // 이름 중복 체크 (관리자 페이지에서 신규 카테고리 추가할때 미리 동일한 카테고리 이름이 있는지 조회)
     boolean existsByName(String name);
+
+    //Category가 삭제되면 해당 Category를 갖는 Post의 카테고리리는 미분류(default)로 분류
+    default Optional<Long> findDefaultCategory() {
+        return findIdByDefaultCategoryTrue();
+    }
+
+    Optional<Long> findIdByDefaultCategoryTrue();
 }

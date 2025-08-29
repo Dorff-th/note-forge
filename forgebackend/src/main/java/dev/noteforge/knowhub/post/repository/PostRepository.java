@@ -85,4 +85,14 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     //관리자 화면에서 여러 Post 일괄삭제
     void deleteByIdIn(List<Long> postIds);
 
+    /**
+     * 특정 카테고리의 모든 Post를 기본 카테고리로 이동
+     * @param categoryId 삭제할 카테고리 id
+     * @param defaultCategoryId 기본 카테고리 id
+     * @return 업데이트된 Post 개수
+     */
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("UPDATE Post p SET p.category.id = :defaultCategoryId WHERE p.category.id = :categoryId")
+    int movePostsToDefaultCategory(@Param("defaultCategoryId") Long categoryId, @Param("categoryId") Long defaultCategoryId);
+
 }

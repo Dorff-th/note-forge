@@ -3,7 +3,9 @@ package dev.noteforge.knowhub.admin.category.service;
 
 import dev.noteforge.knowhub.category.domain.Category;
 import dev.noteforge.knowhub.category.repository.CategoryRepository;
+import dev.noteforge.knowhub.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,9 +16,11 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AdminCategoryService {
 
     private final CategoryRepository categoryRepository;
+    private  final PostRepository postRepository;
 
     //미분류 카테고리는 절대 삭제할 수 없기에 관리자화면에서도 안보이도록 조회
     @Transactional(readOnly = true)
@@ -66,14 +70,15 @@ public class AdminCategoryService {
         if (category.isDefaultCategory()) {
             throw new IllegalStateException("기본 카테고리는 삭제할 수 없습니다.");
         }
-
+        // 1. 기본 카테고리 조회
         Category defaultCategory = categoryRepository.findByDefaultCategoryTrue()
                 .orElseThrow(() -> new IllegalStateException("기본 카테고리가 존재하지 않습니다."));
 
-        // 카테고리 삭제 전에 게시글들을 기본 카테고리로 이동
-        // (PostRepository 필요)
-        // TODO: PostRepository에서 기존 Post → defaultCategory로 업데이트 필요
-        // postRepository.updateCategoryToDefault(categoryId, defaultCategory.getId());
+        log.debug(" ****** categoryId : " + categoryId + " , defaultCategory.getId() : " + defaultCategory.getId());
+
+        // 2. Post 카테고리 변경
+        int updatedCnt = postRepository.movePostsToDefaultCategory(defaultCategory.getId(), categoryId);
+        log.debug("*************updatedCnt : " + updatedCnt);
 
         categoryRepository.delete(category);
     }
