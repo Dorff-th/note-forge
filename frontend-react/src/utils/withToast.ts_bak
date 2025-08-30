@@ -1,0 +1,31 @@
+// src/utils/withToast.ts
+import type { AppDispatch } from '@/store/index';
+import { showToast } from '@/store/slices/toastSlice';
+
+/**
+ * API 호출이나 비동기 작업을 감싸면서
+ * 성공/실패시 Toast 메시지를 자동으로 띄워주는 유틸
+ */
+export async function withToast<T>(
+  dispatch: AppDispatch,
+  action: () => Promise<T>,
+  {
+    successMessage = '작업이 성공했습니다.',
+    errorMessage = '작업 중 오류가 발생했습니다.',
+  }: { successMessage?: string; errorMessage?: string } = {},
+): Promise<T | undefined> {
+  try {
+    const result = await action();
+    dispatch(showToast({ message: successMessage, type: 'success' }));
+    return result;
+  } catch (err: any) {
+    console.error(err);
+    dispatch(
+      showToast({
+        message: errorMessage,
+        type: 'error',
+      }),
+    );
+    return undefined;
+  }
+}

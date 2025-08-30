@@ -7,6 +7,8 @@ import {
 } from '@/api/adminCategoryApi';
 import type { Category } from '@/types/Category';
 import { Button } from '@/components/ui/Button';
+import ConfirmModal from '@/components/common/ConfirmModal';
+import { withToast } from '@/utils/withToast';
 
 export default function AdminCategoryPage() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -38,13 +40,17 @@ export default function AdminCategoryPage() {
     loadCategories();
   };
 
+  const [open, setOpen] = useState(false);
   const handleDelete = async (id: number) => {
-    if (
-      window.confirm('삭제 시 해당 카테고리의 글은 기본 카테고리로 이동합니다. 계속하시겠습니까?')
-    ) {
-      await deleteCategory(id);
-      loadCategories();
-    }
+    await withToast(
+      deleteCategory(id).then(() => loadCategories()),
+      { success: '카테고리 삭제 완료' },
+    );
+  };
+
+  const handleConfirm = (id: number) => {
+    handleDelete(id); // ✅ 이제 여기서 실제 삭제 실행
+    setOpen(false);
   };
 
   return (
@@ -107,9 +113,16 @@ export default function AdminCategoryPage() {
                     >
                       수정
                     </Button>
-                    <Button variant="destructive" onClick={() => handleDelete(cat.id)}>
+                    <Button variant="destructive" onClick={() => setOpen(true)}>
                       삭제
                     </Button>
+                    <ConfirmModal
+                      open={open}
+                      title="카테고리 삭제"
+                      description={`삭제 시 "${cat.name}" 카테고리의 글은 기본 카테고리로 이동합니다. 계속하시겠습니까?`}
+                      onConfirm={() => handleConfirm(cat.id)}
+                      onCancel={() => setOpen(false)}
+                    />
                   </>
                 )}
               </td>
