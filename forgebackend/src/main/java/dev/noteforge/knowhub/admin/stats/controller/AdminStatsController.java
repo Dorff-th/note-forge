@@ -6,13 +6,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/admin/stats")
+@RequestMapping("/api/admin/stats")
 public class AdminStatsController {
 
     private final AdminStatsService service;
 
     @GetMapping
-    public Object getStats(@RequestParam(defaultValue = "all") String scope) {
+    public Object getStats(@RequestParam(name = "scope", defaultValue = "all") String scope) {
         if ("today".equalsIgnoreCase(scope)) {
             return service.getTodayStats();
         }

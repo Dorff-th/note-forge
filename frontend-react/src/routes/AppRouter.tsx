@@ -2,9 +2,9 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from '@/pages/auth/LoginForm';
 import AdminLayout from '@/components/layouts/AdminLayout';
 import { useAppSelector } from '@store/hooks';
-import AdminDashboardPage from '@/pages/admin/AdminDashboardPage';
 import AdminMenuList from '@/pages/admin/AdminMenuList';
 import AdminCategoryPage from '@/pages/admin/AdminCategoryPage';
+import AdminStatsPage from '@/pages/admin/AdminStatsPage';
 
 const AppRouter = () => {
   const { token, role } = useAppSelector((state) => state.auth);
@@ -21,9 +21,10 @@ const AppRouter = () => {
           token && role === 'ROLE_ADMIN' ? <AdminLayout /> : <Navigate to="/login" replace />
         }
       >
-        <Route index element={<AdminDashboardPage />} />
+        <Route index element={<AdminStatsPage />} />
         <Route path="menus" element={<AdminMenuList />} />
         <Route path="categories" element={<AdminCategoryPage />} />
+        <Route path="stats" element={<AdminStatsPage />} />
       </Route>
 
       {/* USER 라우트 (추후 확장 가능) */}
