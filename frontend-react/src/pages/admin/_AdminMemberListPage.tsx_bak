@@ -5,37 +5,18 @@ import type { MemberResult } from '@/types/Member';
 import { Button } from '@/components/ui/Button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
-interface SearchCondition {
-  email?: string;
-  nickname?: string;
-  role?: 'USER' | 'ADMIN'; // ✅ string 대신 enum 타입으로
-}
-
 export default function AdminMemberListPage() {
   const [members, setMembers] = useState<MemberResult[]>([]);
   const [activeTab, setActiveTab] = useState<'active' | 'inactive'>('active');
 
-  const [search, setSearch] = useState<SearchCondition>({
-    email: '',
-    nickname: '',
-    role: undefined, // ✅ 빈 값은 undefined
-  });
-
-  // 🔹 회원 불러오기 (탭 + 검색 조건 함께 전달)
-  const loadMembers = async (tab: 'active' | 'inactive', condition: SearchCondition = search) => {
-    const data = await fetchMembers({ tab, ...condition });
+  const loadMembers = async (tab: 'active' | 'inactive') => {
+    const data = await fetchMembers({ tab });
     setMembers(data);
   };
 
   useEffect(() => {
     loadMembers(activeTab);
   }, [activeTab]);
-
-  // 🔹 검색폼 제출
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    loadMembers(activeTab, search);
-  };
 
   const handleStatusToggle = async (id: number, status: 'ACTIVE' | 'INACTIVE') => {
     const newStatus = status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
@@ -51,39 +32,6 @@ export default function AdminMemberListPage() {
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-6">회원 관리</h2>
-
-      {/* 🔹 검색폼 */}
-      <form onSubmit={handleSearch} className="flex gap-2 items-center mb-4">
-        <input
-          type="text"
-          placeholder="이메일"
-          value={search.email}
-          onChange={(e) => setSearch({ ...search, email: e.target.value })}
-          className="border rounded px-2 py-1"
-        />
-        <input
-          type="text"
-          placeholder="닉네임"
-          value={search.nickname}
-          onChange={(e) => setSearch({ ...search, nickname: e.target.value })}
-          className="border rounded px-2 py-1"
-        />
-        <select
-          value={search.role ?? ''} // undefined면 '' 처리
-          onChange={(e) =>
-            setSearch({
-              ...search,
-              role: e.target.value === '' ? undefined : (e.target.value as 'USER' | 'ADMIN'),
-            })
-          }
-          className="border rounded px-2 py-1"
-        >
-          <option value="">전체 권한</option>
-          <option value="USER">USER</option>
-          <option value="ADMIN">ADMIN</option>
-        </select>
-        <Button type="submit">검색</Button>
-      </form>
 
       <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as 'active' | 'inactive')}>
         {/* 탭 버튼 */}
@@ -113,7 +61,7 @@ export default function AdminMemberListPage() {
   );
 }
 
-/* 🔹 테이블 컴포넌트 */
+/* 🔹 테이블 컴포넌트 분리 */
 function MemberTable({
   members,
   onStatusToggle,
