@@ -7,6 +7,7 @@ import AdminCategoryPage from '@/pages/admin/AdminCategoryPage';
 import AdminStatsPage from '@/pages/admin/AdminStatsPage';
 import AdminMemberListPage from '@/pages/admin/AdminMemberListPage';
 import AdminMemberDetailPage from '@/pages/admin/AdminMemberDetailPage';
+import UserHomePage from '@/pages/user/UserHomePage';
 
 const AppRouter = () => {
   const { token, role } = useAppSelector((state) => state.auth);
@@ -15,6 +16,16 @@ const AppRouter = () => {
     <Routes>
       {/* 로그인 */}
       <Route path="/login" element={<LoginPage />} />
+
+      <Route
+        path="/user"
+        element={
+          token && role === 'ROLE_USER' ? <UserHomePage /> : <Navigate to="/login" replace />
+        }
+      >
+        {/* 사용자 홈 */}
+        <Route path="/user/home" element={<UserHomePage />} />
+      </Route>
 
       {/* ADMIN 라우트 */}
       <Route

@@ -14,7 +14,7 @@ interface JwtPayload {
   exp: number; // 만료 시간
 }
 
-const LoginPage: React.FC = () => {
+export default function LoginPage() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
@@ -56,8 +56,15 @@ const LoginPage: React.FC = () => {
         navigate('/user');
       }
     } catch (error) {
-      console.error('로그인 실패:', error);
-      dispatch(showToast({ message: '로그인 실패! 아이디/비밀번호 확인', type: 'error' }));
+      const err = error as any; // 👈 타입 단언
+      console.error('로그인 실패:', err);
+
+      let message = '로그인 실패! 아이디/비밀번호 확인';
+      if (err.response?.data?.message) {
+        message = err.response.data.message;
+      }
+
+      dispatch(showToast({ message, type: 'error' }));
     }
   };
 
@@ -116,6 +123,4 @@ const LoginPage: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default LoginPage;
+}

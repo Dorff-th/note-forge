@@ -1,9 +1,11 @@
 package dev.noteforge.knowhub.member.service;
 
 import dev.noteforge.knowhub.member.domain.Member;
+import dev.noteforge.knowhub.member.enums.MemberStatus;
 import dev.noteforge.knowhub.member.repository.MemberRepository;
 import dev.noteforge.knowhub.member.security.MemberDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,9 +32,19 @@ public class MemberDetailService implements UserDetailsService  {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("해당 이메일이 존재하지 않습니다 : " + username));
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + username));
 
-        System.out.println("get username  " + member.getUsername());
+        //System.out.println("get username  " + member.getUsername());
+
+        // 🚨 비활성 회원 차단
+        if (member.getStatus() == MemberStatus.INACTIVE) {
+            throw new DisabledException("비활성화된 회원입니다.");
+        }
+
+        // 🚨 탈퇴 회원 차단
+        if (member.isDeleted()) {
+            throw new DisabledException("탈퇴된 회원입니다.");
+        }
 
         return new MemberDetails(member);
     }
