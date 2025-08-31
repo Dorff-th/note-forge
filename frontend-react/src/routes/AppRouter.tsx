@@ -5,6 +5,8 @@ import { useAppSelector } from '@store/hooks';
 import AdminMenuList from '@/pages/admin/AdminMenuList';
 import AdminCategoryPage from '@/pages/admin/AdminCategoryPage';
 import AdminStatsPage from '@/pages/admin/AdminStatsPage';
+import AdminMemberListPage from '@/pages/admin/AdminMemberListPage';
+import AdminMemberDetailPage from '@/pages/admin/AdminMemberDetailPage';
 
 const AppRouter = () => {
   const { token, role } = useAppSelector((state) => state.auth);
@@ -25,6 +27,8 @@ const AppRouter = () => {
         <Route path="menus" element={<AdminMenuList />} />
         <Route path="categories" element={<AdminCategoryPage />} />
         <Route path="stats" element={<AdminStatsPage />} />
+        <Route path="members" element={<AdminMemberListPage />} />
+        <Route path="/admin/members/:id" element={<AdminMemberDetailPage />} />
       </Route>
 
       {/* USER 라우트 (추후 확장 가능) */}
