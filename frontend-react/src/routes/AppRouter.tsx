@@ -8,6 +8,8 @@ import AdminStatsPage from '@/pages/admin/AdminStatsPage';
 import AdminMemberListPage from '@/pages/admin/AdminMemberListPage';
 import AdminMemberDetailPage from '@/pages/admin/AdminMemberDetailPage';
 import UserHomePage from '@/pages/user/UserHomePage';
+import AdminPostList from '@/pages/admin/AdminPostList';
+import AdminPostDetail from '@/pages/admin/AdminPostDetail';
 
 const AppRouter = () => {
   const { token, role } = useAppSelector((state) => state.auth);
@@ -40,6 +42,8 @@ const AppRouter = () => {
         <Route path="stats" element={<AdminStatsPage />} />
         <Route path="members" element={<AdminMemberListPage />} />
         <Route path="/admin/members/:id" element={<AdminMemberDetailPage />} />
+        <Route path="posts" element={<AdminPostList />} />
+        <Route path="/admin/posts/:id" element={<AdminPostDetail />} />
       </Route>
 
       {/* USER 라우트 (추후 확장 가능) */}

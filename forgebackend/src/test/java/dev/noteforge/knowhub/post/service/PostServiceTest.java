@@ -24,7 +24,7 @@ class PostServiceTest {
         SortDirection sortDirection = SortDirection.ASC; // 정렬 역순
         String sortColumn = "id";
 
-        PageRequestDTO pageRequestDTO = new PageRequestDTO(1, 10, sortColumn, sortDirection);
+        PageRequestDTO pageRequestDTO = new PageRequestDTO(5, 10, sortColumn, sortDirection);
         PageResponseDTO<PostDTO> result = postService.getPostList(pageRequestDTO);
 
         System.out.println(result.getTotalElements());

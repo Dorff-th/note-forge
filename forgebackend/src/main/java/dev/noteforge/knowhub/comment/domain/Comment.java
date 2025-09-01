@@ -3,9 +3,7 @@ package dev.noteforge.knowhub.comment.domain;
 import dev.noteforge.knowhub.member.domain.Member;
 import dev.noteforge.knowhub.post.domain.Post;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -13,6 +11,8 @@ import java.time.LocalDateTime;
 @Table(name = "comment")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class Comment {
 
