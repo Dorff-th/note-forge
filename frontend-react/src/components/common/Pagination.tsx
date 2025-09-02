@@ -18,14 +18,16 @@ const Pagination: React.FC<PaginationProps> = ({
   onPageChange,
 }) => {
   return (
-    <div className="flex justify-center mt-6 space-x-2">
+    <div className="flex items-center justify-center mt-10 gap-2">
       {/* 이전 버튼 */}
       {prev && (
         <button
           onClick={() => onPageChange(startPage - 1)}
-          className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
+          className="px-3 py-2 rounded border bg-white text-gray-600
+                     hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01]
+                     transform transition duration-300 cursor-pointer"
         >
-          이전
+          «
         </button>
       )}
 
@@ -34,9 +36,13 @@ const Pagination: React.FC<PaginationProps> = ({
         <button
           key={pageNum}
           onClick={() => onPageChange(pageNum)}
-          className={`px-3 py-1 rounded ${
-            page === pageNum ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'
-          }`}
+          className={`px-3 py-2 rounded border transform transition duration-300 cursor-pointer
+                      hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01] 
+                      ${
+                        page === pageNum
+                          ? 'bg-gray-800 text-white font-bold shadow ring-2 ring-offset-2 ring-gray-500'
+                          : 'bg-white text-gray-800 hover:bg-gray-100'
+                      }`}
         >
           {pageNum}
         </button>
@@ -46,9 +52,11 @@ const Pagination: React.FC<PaginationProps> = ({
       {next && (
         <button
           onClick={() => onPageChange(endPage + 1)}
-          className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
+          className="px-3 py-2 rounded border bg-white text-gray-600
+                     hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01]
+                     transform transition duration-300 cursor-pointer"
         >
-          다음
+          »
         </button>
       )}
     </div>

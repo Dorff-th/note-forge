@@ -10,7 +10,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col">
       {isAuthenticated ? <UserHeader /> : <PublicHeader />}
-      <main className="flex-1 bg-gray-50">{children}</main>
+      <main className="flex-1 bg-gray-50">
+        <div className="max-w-6xl mx-auto w-full px-6 py-8">{children}</div>
+      </main>
     </div>
   );
 }

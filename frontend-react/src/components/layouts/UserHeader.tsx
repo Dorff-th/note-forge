@@ -1,6 +1,6 @@
 // src/components/layout/UserHeader.tsx
 import { Link } from 'react-router-dom';
-import { Search, LogOut, PlusCircle, User } from 'lucide-react';
+import { Search, LogOut, User } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '@store/slices/authSlice';
 import type { RootState } from '@store/index';
@@ -39,13 +39,13 @@ export default function UserHeader() {
 
       {/* 우측: 글쓰기, 프로필, 로그아웃 */}
       <div className="flex items-center space-x-4">
-        <Link
+        {/* <Link
           to="/posts/new"
           className="flex items-center space-x-1 px-4 py-2 border border-indigo-500 text-indigo-500 rounded-md hover:bg-indigo-500 hover:text-white transition"
         >
           <PlusCircle className="h-4 w-4" />
           <span>New Post</span>
-        </Link>
+        </Link> */}
 
         <div className="flex items-center space-x-2">
           <User className="h-5 w-5 text-gray-600" />

@@ -10,20 +10,31 @@ import AdminMemberDetailPage from '@/pages/admin/AdminMemberDetailPage';
 import UserHomePage from '@/pages/user/UserHomePage';
 import AdminPostList from '@/pages/admin/AdminPostList';
 import AdminPostDetail from '@/pages/admin/AdminPostDetail';
+import AppLayout from '@/components/layouts/AppLayout';
 import UserHeader from '@/components/layouts/UserHeader';
+import PostListPage from '@/pages/post/PostListPage';
 
 const AppRouter = () => {
   const { token, user } = useAppSelector((state) => state.auth);
 
   return (
     <Routes>
+      <Route
+        path="/posts"
+        element={
+          <AppLayout>
+            <PostListPage />
+          </AppLayout>
+        }
+      />
+
       {/* 로그인 */}
       <Route path="/login" element={<LoginPage />} />
 
       <Route
         path="/user"
         element={
-          token && user?.role === 'ROLE_USER' ? <UserHeader /> : <Navigate to="/login" replace />
+          token && user?.role === 'ROLE_USER' ? <UserHeader /> : <Navigate to="/posts" replace />
         }
       >
         {/* 사용자 홈 */}
@@ -34,7 +45,7 @@ const AppRouter = () => {
       <Route
         path="/admin"
         element={
-          token && user?.role === 'ROLE_ADMIN' ? <AdminLayout /> : <Navigate to="/login" replace />
+          token && user?.role === 'ROLE_ADMIN' ? <AdminLayout /> : <Navigate to="/posts" replace />
         }
       >
         <Route index element={<AdminStatsPage />} />
@@ -48,7 +59,8 @@ const AppRouter = () => {
       </Route>
 
       {/* 기본 리다이렉션 */}
-      <Route path="*" element={<Navigate to="/login" />} />
+      {/* <Route path="*" element={<Navigate to="/login" />} /> */}
+      <Route path="*" element={<Navigate to="/posts" />} />
     </Routes>
   );
 };
