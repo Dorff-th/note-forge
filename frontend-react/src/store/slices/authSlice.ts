@@ -3,17 +3,23 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import axiosInstance from '@/api/axiosInstance';
 
+interface User {
+  id: number;
+  username: string;
+  role: string;
+  nickname: string;
+  profileImageUrl: string;
+}
+
 interface AuthState {
   token: string | null;
-  username: string | null;
-  role: string | null; // ✅ role 추가
+  user: User | null;
   isAuthenticated: boolean;
 }
 
 const initialState: AuthState = {
-  token: localStorage.getItem('accessToken'), // ✅ 로컬스토리지 동기화
-  username: localStorage.getItem('username'),
-  role: localStorage.getItem('role'),
+  token: localStorage.getItem('accessToken'),
+  user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null,
   isAuthenticated: !!localStorage.getItem('accessToken'),
 };
 
@@ -40,29 +46,22 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    loginSuccess: (
-      state,
-      action: PayloadAction<{ token: string; username: string; role: string }>, // ✅ role 포함
-    ) => {
+    loginSuccess: (state, action: PayloadAction<{ token: string; user: User }>) => {
       state.token = action.payload.token;
-      state.username = action.payload.username;
-      state.role = action.payload.role;
+      state.user = action.payload.user;
       state.isAuthenticated = true;
 
-      // 로컬스토리지에도 저장
+      // 로컬스토리지 동기화
       localStorage.setItem('accessToken', action.payload.token);
-      localStorage.setItem('username', action.payload.username);
-      localStorage.setItem('role', action.payload.role);
+      localStorage.setItem('user', JSON.stringify(action.payload.user));
     },
     logout: (state) => {
       state.token = null;
-      state.username = null;
-      state.role = null; // ✅ role 초기화
+      state.user = null;
       state.isAuthenticated = false;
 
       localStorage.removeItem('accessToken');
-      localStorage.removeItem('username');
-      localStorage.removeItem('role');
+      localStorage.removeItem('user');
     },
   },
 });

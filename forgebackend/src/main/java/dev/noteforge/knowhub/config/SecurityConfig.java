@@ -5,6 +5,7 @@ import dev.noteforge.knowhub.member.service.MemberDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -34,7 +35,12 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // ✅ 여기!
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/test/**", "/error", "/register", "/login", "/css/**", "/js/**").permitAll()
-                        .requestMatchers("/", "/posts", "/posts/**", "/api/**", "/search/**").permitAll() // ✅ 공개
+                        //.requestMatchers("/", "/posts", "/posts/**", "/api/**", "/search/**").permitAll() // ✅ 공개
+                        .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/posts/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.PUT, "/api/posts/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/posts/**").hasRole("USER")
+                        .requestMatchers("/", "/posts", "/posts/**", "/api/**", "/search/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll() // 로그인, 회원가입 등은 허용
                         .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers("/api/attachments/download/**").permitAll()

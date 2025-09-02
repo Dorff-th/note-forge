@@ -31,20 +31,21 @@ export default function LoginPage() {
         password,
       });
 
-      const { token } = response.data; // ✅ token만 추출
+      const { token, user } = response.data; // ✅ token만 추출
       const decoded: JwtPayload = jwtDecode(token); // ✅ payload 해석
 
       // payload에서 username, role 추출
-      const finalUsername = decoded.sub;
+      //const finalUsername = decoded.sub;
       const finalRole = decoded.role;
 
       // ✅ Redux store 업데이트
-      dispatch(loginSuccess({ token, username: finalUsername, role: finalRole }));
+      //dispatch(loginSuccess({ token, username: finalUsername, role: finalRole }));
+
+      dispatch(loginSuccess({ token: token, user }));
 
       // ✅ localStorage 저장
       localStorage.setItem('accessToken', token);
-      localStorage.setItem('username', finalUsername);
-      localStorage.setItem('role', finalRole);
+      localStorage.setItem('user', JSON.stringify(user));
 
       // ✅ 성공 토스트
       dispatch(showToast({ message: '로그인 성공!', type: 'success' }));

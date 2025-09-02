@@ -5,6 +5,7 @@ package dev.noteforge.knowhub.member.controller;
 import dev.noteforge.knowhub.common.util.JwtTokenProvider;
 import dev.noteforge.knowhub.member.dto.LoginRequest;
 import dev.noteforge.knowhub.member.dto.LoginResponse;
+import dev.noteforge.knowhub.member.security.MemberDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,15 +33,25 @@ public class AuthController {
                 )
         );
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        //System.out.println("\n\n\n-----------");
-        //System.out.println(userDetails.getPassword());
+        //UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        MemberDetails userDetails = (MemberDetails) authentication.getPrincipal();
 
         // JWT 발급
         String token = jwtTokenProvider.createToken(userDetails.getUsername(),
-                userDetails.getAuthorities().iterator().next().getAuthority());
+                userDetails.getAuthorities().iterator().next().getAuthority(),
+                userDetails.getNickname(),
+                userDetails.getProfileImageUrl());
 
-        return new LoginResponse(token);
+        return LoginResponse.builder()
+                .token(token)
+                .user(LoginResponse.UserInfo.builder()
+                        .id(userDetails.getId())
+                        .username(userDetails.getUsername())
+                        .role(userDetails.getAuthorities().iterator().next().getAuthority())
+                        .nickname(userDetails.getNickname())
+                        .profileImageUrl(userDetails.getProfileImageUrl())
+                        .build())
+                .build();
     }
 }
 

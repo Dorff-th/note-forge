@@ -22,6 +22,14 @@ public class MemberDetails implements UserDetails {
         return member.getId();
     }
 
+    public String getNickname() {
+        return member.getNickname();
+    }
+
+    public String getProfileImageUrl() {
+        return member.getProfileImageUrl();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(new SimpleGrantedAuthority("ROLE_" + member.getRole()));

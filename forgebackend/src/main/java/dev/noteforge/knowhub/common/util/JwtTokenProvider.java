@@ -31,7 +31,7 @@ public class JwtTokenProvider {
     }
 
     // ✅ 토큰 생성
-    public String createToken(String username, String role) {
+    public String createToken(String username, String role, String nickname, String profileImageUrl) {
         Claims claims = Jwts.claims().setSubject(username);
         claims.put("role", role); // 사용자 권한도 넣기
 
