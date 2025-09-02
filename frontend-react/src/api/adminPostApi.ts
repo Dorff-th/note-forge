@@ -1,6 +1,7 @@
 import axiosInstance from '@/api/axiosInstance';
 import type { PostDTO, PostDetailDTO } from '@/types/Post';
 import type { PageResponse } from '@/types/Common';
+import type { CommentResponse } from '@/types/Comment';
 
 // 게시글 목록 조회
 export const fetchAdminPosts = async (
@@ -30,3 +31,14 @@ export const deleteAdminPost = async (id: number): Promise<void> => {
 export const deleteAdminPosts = async (ids: number[]): Promise<void> => {
   await axiosInstance.delete('/admin/posts', { data: ids });
 };
+
+// 특정 게시글의 댓글 목록 조회
+export async function fetchCommentsByPostId(postId: number): Promise<CommentResponse[]> {
+  const res = await axiosInstance.get<CommentResponse[]>(`/admin/comments/post/${postId}`);
+  return res.data;
+}
+
+// 댓글 일괄 삭제
+export async function deleteComments(commentIds: number[]): Promise<void> {
+  await axiosInstance.delete('/admin/comments', { data: commentIds });
+}

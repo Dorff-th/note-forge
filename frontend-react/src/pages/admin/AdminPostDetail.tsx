@@ -5,12 +5,15 @@ import type { PostDetailDTO } from '@/types/Post';
 import { Viewer } from '@toast-ui/react-editor';
 import ConfirmModal from '@/components/common/ConfirmModal';
 import { withToast } from '@/utils/withToast';
+import AdminComment from '@/components/admin/AdminComment';
 
 export default function AdminPostDetail() {
   const { id } = useParams<{ id: string }>();
   const [post, setPost] = useState<PostDetailDTO | null>(null);
   const [openConfirm, setOpenConfirm] = useState(false);
   const navigate = useNavigate();
+
+  const postId: number = Number(id);
 
   useEffect(() => {
     if (id) {
@@ -84,6 +87,9 @@ export default function AdminPostDetail() {
           삭제
         </button>
       </div>
+
+      {/* 댓글 관리 섹션 */}
+      <AdminComment postId={postId} />
 
       {/* 확인 모달 */}
       <ConfirmModal

@@ -16,5 +16,6 @@ public class CommentResponseDTO {
     private Long postId;
     private Long memberId;
     private String username;
+    private String nickname;
 
 }
