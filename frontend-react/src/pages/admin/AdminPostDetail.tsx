@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { fetchAdminPostDetail, deleteAdminPost } from '@/api/adminPostApi';
 import type { PostDetailDTO } from '@/types/Post';
 import { Viewer } from '@toast-ui/react-editor';
-import { useNavigate } from 'react-router-dom';
 import ConfirmModal from '@/components/common/ConfirmModal';
 import { withToast } from '@/utils/withToast';
 
@@ -32,7 +31,9 @@ export default function AdminPostDetail() {
 
   if (!post) return <div className="p-6">로딩중...</div>;
 
-  const backendBaseUrl = 'http://localhost:8080';
+  //const backendBaseUrl = 'http://localhost:8080';
+  //const backendBaseUrl = import.meta.env.VITE_API_BASE_URL;
+  const backendBaseUrl = import.meta.env.VITE_API_BASE_URL.replace(/\/api$/, '');
 
   return (
     <div className="p-6">
@@ -49,6 +50,25 @@ export default function AdminPostDetail() {
         <Viewer initialValue={post.content.replace(/\/uploads\//g, `${backendBaseUrl}/uploads/`)} />
       </div>
 
+      {/* ✅ 첨부파일 리스트 */}
+      {post.attachments && post.attachments.length > 0 && (
+        <div className="mb-6">
+          <h3 className="font-semibold mb-2">첨부파일</h3>
+          <ul className="space-y-1">
+            {post.attachments.map((att) => (
+              <li key={att.id}>
+                <a
+                  href={`${backendBaseUrl}/api/attachments/download/${att.id}`}
+                  className="text-blue-600 hover:underline transition-colors"
+                >
+                  {att.originalName} ({att.fileSizeText})
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {/* 버튼 영역 */}
       <div className="flex space-x-2">
         <button
@@ -64,6 +84,7 @@ export default function AdminPostDetail() {
           삭제
         </button>
       </div>
+
       {/* 확인 모달 */}
       <ConfirmModal
         open={openConfirm}

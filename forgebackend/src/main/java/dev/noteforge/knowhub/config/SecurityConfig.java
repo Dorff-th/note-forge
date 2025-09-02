@@ -37,7 +37,7 @@ public class SecurityConfig {
                         .requestMatchers("/", "/posts", "/posts/**", "/api/**", "/search/**").permitAll() // ✅ 공개
                         .requestMatchers("/api/auth/**").permitAll() // 로그인, 회원가입 등은 허용
                         .requestMatchers("/uploads/**").permitAll()
-                        .requestMatchers("/download/**").permitAll()
+                        .requestMatchers("/api/attachments/download/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/posts/write", "/posts/*/edit", "/posts/*/delete", "/api/comments/**").hasAnyRole("USER", "ADMIN") // ✅ 로그인 필요
                         .anyRequest().authenticated())

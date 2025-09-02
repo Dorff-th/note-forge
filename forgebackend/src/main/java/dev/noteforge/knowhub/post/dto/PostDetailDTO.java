@@ -1,11 +1,13 @@
 package dev.noteforge.knowhub.post.dto;
 
+import dev.noteforge.knowhub.attachment.dto.AttachmentViewDTO;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /*
 Post 상세내용을 반환하는 DTO
@@ -13,9 +15,8 @@ Post 상세내용을 반환하는 DTO
 
 
 @NoArgsConstructor
-@Builder
+//@Builder
 @Data
-@ToString
 public class PostDetailDTO {
     private Long id;
     private String title;
@@ -27,6 +28,8 @@ public class PostDetailDTO {
     private String username;
     private Long categoryId;
     private String nickname;
+
+    private List<AttachmentViewDTO> attachments;
 
 
 
@@ -44,5 +47,9 @@ public class PostDetailDTO {
         this.categoryId = categoryId;
         this.nickname = nickname;
 
+    }
+
+    public void setAttachments(List<AttachmentViewDTO> attachments) {
+        this.attachments = attachments;
     }
 }

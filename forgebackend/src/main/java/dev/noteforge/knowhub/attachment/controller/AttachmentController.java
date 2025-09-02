@@ -18,7 +18,7 @@ public class AttachmentController {
     private final AttachmentService attachmentService;
     private final GeneralFileUtil fileUtil;
 
-    @GetMapping("/download/{id}")
+    @GetMapping("/api/attachments/download/{id}")
     public ResponseEntity<Resource> download(@PathVariable("id") Long id) {
         Attachment attachment = attachmentService.getById(id).orElseThrow(() -> new IllegalArgumentException("해당 id를 갖는 첨부파일이 없습니다!"));
         return fileUtil.getDownloadResponse(attachment.getFileUrl(), attachment.getOriginFileName());

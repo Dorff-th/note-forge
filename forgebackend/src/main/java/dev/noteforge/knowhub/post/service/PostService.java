@@ -1,9 +1,13 @@
 package dev.noteforge.knowhub.post.service;
 
 import dev.noteforge.knowhub.attachment.domain.Attachment;
+import dev.noteforge.knowhub.attachment.dto.AttachmentViewDTO;
 import dev.noteforge.knowhub.attachment.dto.FileSaveResultDTO;
+import dev.noteforge.knowhub.attachment.enums.UploadType;
 import dev.noteforge.knowhub.attachment.repository.AttachmentRepository;
 import dev.noteforge.knowhub.attachment.repository.ImageUploadRepository;
+import dev.noteforge.knowhub.attachment.service.AttachmentService;
+import dev.noteforge.knowhub.attachment.util.FormatFileSize;
 import dev.noteforge.knowhub.attachment.util.GeneralFileUtil;
 import dev.noteforge.knowhub.common.dto.PageRequestDTO;
 import dev.noteforge.knowhub.common.dto.PageResponseDTO;
@@ -36,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -56,6 +61,8 @@ public class PostService {
     private final TagService tagService;
     private final PostTagRepository postTagRepository;
 
+    private final AttachmentService attachmentService;
+
     //post 페이징(목록)
     public PageResponseDTO<PostDTO> getPostList(PageRequestDTO requestDTO) {
 
@@ -75,7 +82,34 @@ public class PostService {
     //post 상세
     public Optional<PostDetailDTO> getPost(Long id) {
 
-        return postRepository.findPostDetail(id);
+        return postRepository.findPostDetail(id)
+                .map(post -> {
+                    PostDetailDTO dto = new PostDetailDTO();
+                    dto.setId(post.getId());
+                    dto.setTitle(post.getTitle());
+                    dto.setContent(post.getContent());
+                    dto.setCategoryName(post.getCategoryName());
+                    dto.setUsername(post.getUsername());
+                    dto.setNickname(post.getNickname());
+                    dto.setCreatedAt(post.getCreatedAt());
+                    dto.setUpdatedAt(post.getUpdatedAt());
+
+                    // ✅ 첨부파일 조회 추가
+                    List<AttachmentViewDTO> attachments =
+                            attachmentService.attachmentsByPostId(post.getId(), UploadType.ATTACHMENT)
+                                    .stream()
+                                    .map(attachment -> AttachmentViewDTO.builder()
+                                            .id(attachment.getId())
+                                            .originalName(attachment.getOriginFileName())
+                                            .fileSizeText(FormatFileSize.formatFileSize(attachment.getFileSize()))
+                                            .uploadType(attachment.getUploadType())
+                                            .build())
+                                    .collect(Collectors.toList());
+
+                    dto.setAttachments(attachments);
+
+                    return dto;
+                });
 
     }
 

@@ -1,3 +1,4 @@
+import type { Attachment } from './Attachment';
 // types/post.ts
 // 게시글 목록용 DTO
 export interface PostDTO {
@@ -29,4 +30,6 @@ export interface PostDetailDTO {
   memberId: number;
   username: string;
   nickname: string;
+
+  attachments: Attachment[]; // ✅ 추가
 }
