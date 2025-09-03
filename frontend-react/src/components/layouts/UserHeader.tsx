@@ -1,9 +1,10 @@
 // src/components/layout/UserHeader.tsx
 import { Link } from 'react-router-dom';
-import { Search, LogOut, User } from 'lucide-react';
+import { Search, LogOut } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '@store/slices/authSlice';
 import type { RootState } from '@store/index';
+import Avatar from '@/components/common/Avatar';
 
 export default function UserHeader() {
   const dispatch = useDispatch();
@@ -48,7 +49,7 @@ export default function UserHeader() {
         </Link> */}
 
         <div className="flex items-center space-x-2">
-          <User className="h-5 w-5 text-gray-600" />
+          <Avatar src={user?.profileImageUrl} alt={user?.nickname} size={32} />
           <span className="text-gray-700 font-medium">{user?.nickname ?? 'User'}</span>
         </div>
 

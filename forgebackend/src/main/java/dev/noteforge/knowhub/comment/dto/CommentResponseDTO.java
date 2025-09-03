@@ -17,5 +17,6 @@ public class CommentResponseDTO {
     private Long memberId;
     private String username;
     private String nickname;
+    private String profileImageUrl;
 
 }

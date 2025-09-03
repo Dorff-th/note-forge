@@ -19,7 +19,8 @@ public interface CommentRepository  extends JpaRepository<Comment, Long> {
             c.post.Id,
             m.id,
             m.username,
-            m.nickname
+            m.nickname,
+            m.profileImageUrl
            ) 
         FROM Comment c
         INNER JOIN  c.member m

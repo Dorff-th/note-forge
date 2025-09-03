@@ -6,4 +6,5 @@ export interface CommentResponse {
   memberId: number;
   username: string;
   nickname: string;
+  profileImageUrl: string | null;
 }

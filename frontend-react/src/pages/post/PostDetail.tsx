@@ -5,7 +5,7 @@ import type { PostDetailDTO } from '@/types/Post';
 import { Viewer } from '@toast-ui/react-editor';
 import ConfirmModal from '@/components/common/ConfirmModal';
 import { withToast } from '@/utils/withToast';
-import Comment from '@/components/user/Comment';
+import UserComment from '@/components/user/UserComment';
 
 export default function PostDetail() {
   const { id } = useParams<{ id: string }>();
@@ -78,7 +78,7 @@ export default function PostDetail() {
       </div>
 
       {/* 댓글 관리 섹션 */}
-      <Comment postId={postId} />
+      <UserComment postId={postId} />
     </div>
   );
 }
