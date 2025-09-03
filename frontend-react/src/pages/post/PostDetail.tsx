@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchPostDetail } from '@/api/postApi';
+import { fetchPostDetail, getPostTags } from '@/api/postApi';
 import type { PostDetailDTO } from '@/types/Post';
 import { Viewer } from '@toast-ui/react-editor';
 import ConfirmModal from '@/components/common/ConfirmModal';
 import { withToast } from '@/utils/withToast';
 import UserComment from '@/components/user/UserComment';
+import type { Tag } from '@/types/Tag';
 
 export default function PostDetail() {
   const { id } = useParams<{ id: string }>();
@@ -15,11 +16,21 @@ export default function PostDetail() {
 
   const postId: number = Number(id);
 
+  const [tags, setTags] = useState<Tag[]>([]);
+
   useEffect(() => {
     if (id) {
       fetchPostDetail(Number(id)).then(setPost).catch(console.error);
     }
   }, [id]);
+
+  useEffect(() => {
+    getPostTags(postId)
+      .then(setTags)
+      .catch(() => setTags([]));
+  }, [postId]);
+
+  if (tags.length === 0) return null;
 
   //todo 삭제 기능 구현
 
@@ -42,6 +53,14 @@ export default function PostDetail() {
         <Viewer initialValue={post.content.replace(/\/uploads\//g, `${backendBaseUrl}/uploads/`)} />
       </div>
 
+      {/* ✅ 태그 리스트 */}
+      <div className="flex flex-wrap gap-2 mt-3">
+        {tags.map((tag) => (
+          <span key={tag.id} className="px-3 py-1 text-sm text-gray-700 bg-gray-100 rounded-full">
+            #{tag.name}
+          </span>
+        ))}
+      </div>
       {/* ✅ 첨부파일 리스트 */}
       {post.attachments && post.attachments.length > 0 && (
         <div className="mb-6">

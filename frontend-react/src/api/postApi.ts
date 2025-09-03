@@ -3,6 +3,7 @@ import axiosInstance from './axiosInstance';
 import type { PostDTO, PostDetailDTO } from '@/types/Post';
 import type { PageResponse } from '@/types/Common';
 import type { CommentResponse } from '@/types/Comment';
+import type { Tag } from '@/types/Tag';
 
 export const fetchPosts = async (
   page: number,
@@ -22,8 +23,14 @@ export const fetchPostDetail = async (id: number): Promise<PostDetailDTO> => {
   return response.data;
 };
 
-// 특정 게시글의 댓글 목록 조회
+// 게시글에 달린 댓글 목록 조회
 export async function fetchCommentsByPostId(postId: number): Promise<CommentResponse[]> {
   const res = await axiosInstance.get<CommentResponse[]>(`/posts/${postId}/comments`);
+  return res.data;
+}
+
+// 📌 게시글에 달린 태그 목록 조회
+export async function getPostTags(postId: number): Promise<Tag[]> {
+  const res = await axiosInstance.get(`/posts/${postId}/tags`);
   return res.data;
 }
