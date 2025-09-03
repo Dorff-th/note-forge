@@ -1,6 +1,7 @@
 // src/pages/PostListPage.tsx
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import type { RootState } from '@store/index';
 import { fetchPosts } from '@/api/postApi';
 import type { PostDTO } from '@/types/Post';
@@ -13,6 +14,8 @@ export default function PostListPage() {
   const [posts, setPosts] = useState<PostDTO[]>([]);
   const [pageInfo, setPageInfo] = useState<PageResponse<PostDTO> | null>(null);
   const [page, setPage] = useState(1);
+
+  const navigate = useNavigate();
 
   //const navigate = useNavigate();
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -52,6 +55,7 @@ export default function PostListPage() {
               className="post-card bg-white rounded-lg shadow-md p-4
                          hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01]
                          transform transition duration-300 cursor-pointer"
+              onClick={() => navigate(`/posts/${post.id}`)}
             >
               {/* 제목 */}
               <h3 className="text-base font-semibold text-gray-900 mb-2">{post.title}</h3>

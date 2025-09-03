@@ -13,6 +13,7 @@ import AdminPostDetail from '@/pages/admin/AdminPostDetail';
 import AppLayout from '@/components/layouts/AppLayout';
 import UserHeader from '@/components/layouts/UserHeader';
 import PostListPage from '@/pages/post/PostListPage';
+import PostDetail from '@/pages/post/PostDetail';
 
 const AppRouter = () => {
   const { token, user } = useAppSelector((state) => state.auth);
@@ -24,6 +25,15 @@ const AppRouter = () => {
         element={
           <AppLayout>
             <PostListPage />
+          </AppLayout>
+        }
+      />
+
+      <Route
+        path="/posts/:id"
+        element={
+          <AppLayout>
+            <PostDetail />
           </AppLayout>
         }
       />
