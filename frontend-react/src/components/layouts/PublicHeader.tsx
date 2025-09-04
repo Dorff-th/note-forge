@@ -1,8 +1,20 @@
 // src/components/layout/PublicHeader.tsx
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Search } from 'lucide-react';
 
 export default function PublicHeader() {
+  const [keyword, setKeyword] = useState('');
+  const navigate = useNavigate();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!keyword.trim()) return;
+    // /search?keyword=... 로 이동
+    navigate(`/search?keyword=${encodeURIComponent(keyword)}`);
+  };
+
   return (
     <header className="flex items-center justify-between px-6 py-4 bg-white shadow-sm">
       {/* 좌측 로고 */}
@@ -18,12 +30,16 @@ export default function PublicHeader() {
       {/* 중앙 검색 */}
       <div className="flex-1 max-w-lg mx-6">
         <div className="relative">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="w-full border rounded-md py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-          />
-          <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              placeholder="Search..."
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              className="w-full border rounded-md py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            />
+            <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+          </form>
         </div>
       </div>
 

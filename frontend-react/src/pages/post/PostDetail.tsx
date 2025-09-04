@@ -30,8 +30,6 @@ export default function PostDetail() {
       .catch(() => setTags([]));
   }, [postId]);
 
-  if (tags.length === 0) return null;
-
   //todo 삭제 기능 구현
 
   if (!post) return <div className="p-6">로딩중...</div>;
@@ -54,17 +52,19 @@ export default function PostDetail() {
       </div>
 
       {/* ✅ 태그 리스트 */}
-      <div className="flex flex-wrap gap-2 mt-3">
-        {tags.map((tag) => (
-          <span
-            key={tag.id}
-            className="px-3 py-1 text-sm text-gray-700 bg-gray-100 rounded-full cursor-pointer hover:underline"
-            onClick={() => navigate(`/posts/tags/${tag.name}`)}
-          >
-            #{tag.name}
-          </span>
-        ))}
-      </div>
+      {tags?.length ? (
+        <div className="flex flex-wrap gap-2 mt-3">
+          {tags.map((tag) => (
+            <span
+              key={tag.id}
+              className="px-3 py-1 text-sm text-gray-700 bg-gray-100 rounded-full cursor-pointer hover:underline"
+              onClick={() => navigate(`/posts/tags/${tag.name}`)}
+            >
+              #{tag.name}
+            </span>
+          ))}
+        </div>
+      ) : null}
       {/* ✅ 첨부파일 리스트 */}
       {post.attachments && post.attachments.length > 0 && (
         <div className="mb-6">

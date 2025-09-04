@@ -15,6 +15,7 @@ import UserHeader from '@/components/layouts/UserHeader';
 import PostListPage from '@/pages/post/PostListPage';
 import PostDetail from '@/pages/post/PostDetail';
 import TagPostListPage from '@/pages/post/TagPostListPage';
+import SearchPage from '@/pages/search/SearchPage';
 
 const AppRouter = () => {
   const { token, user } = useAppSelector((state) => state.auth);
@@ -35,6 +36,15 @@ const AppRouter = () => {
         element={
           <AppLayout>
             <TagPostListPage />
+          </AppLayout>
+        }
+      />
+
+      <Route
+        path="/search"
+        element={
+          <AppLayout>
+            <SearchPage />
           </AppLayout>
         }
       />

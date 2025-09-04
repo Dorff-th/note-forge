@@ -1,12 +1,13 @@
+// src/types/Common.ts
 export interface PageResponse<T> {
-  page: number;
+  dtoList: T[]; // ✅ 실제 목록은 dtoList
+  page: number; // 현재 페이지
   size: number;
   totalPages: number;
-  totalElements: number;
   startPage: number;
   endPage: number;
   prev: boolean;
   next: boolean;
-  dtoList: T[];
+  totalElements: number;
   currentPage: number;
 }

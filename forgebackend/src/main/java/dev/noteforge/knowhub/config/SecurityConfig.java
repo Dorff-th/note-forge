@@ -36,6 +36,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/test/**", "/error", "/register", "/login", "/css/**", "/js/**").permitAll()
                         //.requestMatchers("/", "/posts", "/posts/**", "/api/**", "/search/**").permitAll() // ✅ 공개
+                        .requestMatchers( "/api/search/**").permitAll()
+                        .requestMatchers( "/api/categories").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/posts/**").hasRole("USER")
                         .requestMatchers(HttpMethod.PUT, "/api/posts/**").hasRole("USER")
