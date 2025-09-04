@@ -1,12 +1,14 @@
 // src/pages/SearchPage.tsx
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { searchPosts } from '@/api/searchApi';
 import type { SearchApiResponse } from '@/api/searchApi';
 import type { SearchFilter } from '@/types/SearchFilter';
 import Pagination from '@/components/common/Pagination';
 
 export default function SearchPage() {
+  const navigate = useNavigate();
+
   const [searchParams] = useSearchParams();
   const initialKeyword = searchParams.get('keyword') || '';
   const [filter, setFilter] = useState<SearchFilter>({
@@ -75,17 +77,51 @@ export default function SearchPage() {
         ))}
       </div>
 
+      {/* 검색 결과 개수 */}
+      {data && (
+        <div className="mb-4 text-gray-600">
+          총 <span className="font-bold">{data.result.totalElements}</span>건의 검색 결과가
+          있습니다.
+        </div>
+      )}
+
       {/* 검색 결과 */}
       <div className="space-y-4">
+        {/* 검색 결과 없음 */}
         {data?.result?.dtoList?.length === 0 && (
-          <p className="text-gray-500">검색 결과가 없습니다.</p>
+          <div className="p-6 text-center text-gray-500 border rounded bg-gray-50">
+            검색 결과가 없습니다.
+          </div>
         )}
 
         {data?.result?.dtoList?.map((item) => (
-          <div key={item.postId} className="p-4 border rounded">
-            <h3>{item.title}</h3>
-            <p className="text-gray-600 text-sm">{new Date(item.createdAt).toLocaleDateString()}</p>
-            <p className="line-clamp-2 text-gray-700">{item.content}</p>
+          <div
+            key={item.postId}
+            className="p-5 bg-white border rounded-lg shadow-sm 
+                 hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01]
+                 transform transition duration-300 cursor-pointer"
+            onClick={() => navigate(`/posts/${item.postId}`)} // ✅ 상세로 이동
+          >
+            {/* 제목 (하이라이트 적용) */}
+            <h3
+              className="font-bold text-lg mb-2 text-gray-800"
+              dangerouslySetInnerHTML={{
+                __html: item.highlightedTitle || item.title,
+              }}
+            />
+
+            {/* 구분선 */}
+            <hr className="my-3" />
+
+            {/* 메타정보 */}
+            <div className="flex flex-wrap items-center text-sm text-gray-500 gap-4">
+              <span className="flex items-center gap-1">📂 {item.categoryName}</span>
+              <span className="flex items-center gap-1">📂 {item.title}</span>
+              <span className="flex items-center gap-1">✍️ {item.writerName}</span>
+              <span className="flex items-center gap-1">
+                🗓 {new Date(item.createdAt).toLocaleDateString()}
+              </span>
+            </div>
           </div>
         ))}
       </div>
