@@ -56,7 +56,11 @@ export default function PostDetail() {
       {/* ✅ 태그 리스트 */}
       <div className="flex flex-wrap gap-2 mt-3">
         {tags.map((tag) => (
-          <span key={tag.id} className="px-3 py-1 text-sm text-gray-700 bg-gray-100 rounded-full">
+          <span
+            key={tag.id}
+            className="px-3 py-1 text-sm text-gray-700 bg-gray-100 rounded-full cursor-pointer hover:underline"
+            onClick={() => navigate(`/posts/tags/${tag.name}`)}
+          >
             #{tag.name}
           </span>
         ))}

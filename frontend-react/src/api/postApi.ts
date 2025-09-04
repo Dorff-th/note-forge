@@ -34,3 +34,17 @@ export async function getPostTags(postId: number): Promise<Tag[]> {
   const res = await axiosInstance.get(`/posts/${postId}/tags`);
   return res.data;
 }
+
+// 태그로 게시글 조회
+export const fetchPostsByTag = async (
+  tagName: string,
+  page: number,
+  size: number = 10,
+  sort: string = 'createdAt',
+  direction: 'ASC' | 'DESC' = 'DESC',
+): Promise<PageResponse<PostDTO>> => {
+  const response = await axiosInstance.get<PageResponse<PostDTO>>(`/posts/tags/${tagName}`, {
+    params: { page, size, sort, direction },
+  });
+  return response.data;
+};

@@ -36,6 +36,14 @@ public class PostController {
     }
 
     /**
+     * 특정태그가 있는 게시글 목록 조회(페이징 포함)
+     */
+    @GetMapping("/tags/{tagName}")
+    public PageResponseDTO<PostDTO> getPostsByTag(@PathVariable("tagName") String tagName, PageRequestDTO requestDTO) {
+        return postService.getPostListByTag(tagName, requestDTO);
+    }
+
+    /**
      * 게시글 상세 조회
      */
     @GetMapping("/{id}")

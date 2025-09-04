@@ -36,6 +36,21 @@ class PostServiceTest {
     }
 
     @Test
+    @DisplayName("Post 페이징 처리 테스트 with 특정 태그")
+    void testPostsPagingWithTag() {
+
+        SortDirection sortDirection = SortDirection.ASC; // 정렬 역순
+        String sortColumn = "id";
+        String tagName = "가즈아";
+
+        PageRequestDTO pageRequestDTO = new PageRequestDTO(1, 10, sortColumn, sortDirection);
+        PageResponseDTO<PostDTO> result = postService.getPostListByTag(tagName, pageRequestDTO);
+
+        System.out.println(result.getTotalElements());
+        result.getDtoList().forEach(postDTO -> System.out.println(postDTO));
+    }
+
+    @Test
     @DisplayName("첨부파일이 있는 게시물 상세 조회 화면 테스트")
     void testPostDetailWithAttachment() {
         Long id = 118L;

@@ -14,6 +14,7 @@ import AppLayout from '@/components/layouts/AppLayout';
 import UserHeader from '@/components/layouts/UserHeader';
 import PostListPage from '@/pages/post/PostListPage';
 import PostDetail from '@/pages/post/PostDetail';
+import TagPostListPage from '@/pages/post/TagPostListPage';
 
 const AppRouter = () => {
   const { token, user } = useAppSelector((state) => state.auth);
@@ -25,6 +26,15 @@ const AppRouter = () => {
         element={
           <AppLayout>
             <PostListPage />
+          </AppLayout>
+        }
+      />
+
+      <Route
+        path="/posts/tags/:tagName"
+        element={
+          <AppLayout>
+            <TagPostListPage />
           </AppLayout>
         }
       />

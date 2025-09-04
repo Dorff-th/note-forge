@@ -79,6 +79,22 @@ public class PostService {
 
     }
 
+    //특정 태그의 posts(목록)
+    public PageResponseDTO<PostDTO> getPostListByTag(String tagName, PageRequestDTO requestDTO) {
+
+        Pageable pageable = PageRequest.of(
+                requestDTO.getPage() - 1,
+                requestDTO.getSize(),
+                Sort.by(Sort.Direction.valueOf(requestDTO.getDirection().toString()), requestDTO.getSort()));
+
+
+        Page<PostDTO> result =  postRepository.findAllPostsByTag(tagName, pageable);
+        List<PostDTO> dtoList = result.getContent();
+
+        return new PageResponseDTO<>(requestDTO, result.getTotalElements(), dtoList, 10);
+
+    }
+
     //post 상세
     public Optional<PostDetailDTO> getPost(Long id) {
 
