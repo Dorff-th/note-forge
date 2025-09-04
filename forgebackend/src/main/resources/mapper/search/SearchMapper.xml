@@ -166,10 +166,8 @@
         <!-- ✅ 키워드 검색 -->
         <if test="searchFilterDTO.keyword != null and searchFilterDTO.keyword != ''">
             <choose>
-                <!-- 통합검색 모드: 아무 필터 체크 안 된 경우 OR로 묶기 -->
-                <when test="(searchFilterDTO.titleChecked == null or !searchFilterDTO.titleChecked)
-                  and (searchFilterDTO.contentChecked == null or !searchFilterDTO.contentChecked)
-                  and (searchFilterDTO.commentChecked == null or !searchFilterDTO.commentChecked)">
+                <!-- 아무 체크도 안 된 경우: 통합검색 -->
+                <when test="searchFilterDTO.searchFields == null or searchFilterDTO.searchFields.size == 0">
                     AND (
                     p.title LIKE CONCAT('%', #{searchFilterDTO.keyword}, '%')
                     OR p.content LIKE CONCAT('%', #{searchFilterDTO.keyword}, '%')
@@ -177,17 +175,19 @@
                     )
                 </when>
 
-                <!-- 상세검색 모드: 개별 필터에 따라 AND 조건 -->
+                <!-- 특정 필드만 선택된 경우 -->
                 <otherwise>
-                    <if test="searchFilterDTO.titleChecked">
-                        AND p.title LIKE CONCAT('%', #{searchFilterDTO.keyword}, '%')
-                    </if>
-                    <if test="searchFilterDTO.contentChecked">
-                        AND p.content LIKE CONCAT('%', #{searchFilterDTO.keyword}, '%')
-                    </if>
-                    <if test="searchFilterDTO.commentChecked">
-                        AND cm.content LIKE CONCAT('%', #{searchFilterDTO.keyword}, '%')
-                    </if>
+                    <foreach collection="searchFilterDTO.searchFields" item="field">
+                        <if test="field == 'title'">
+                            AND p.title LIKE CONCAT('%', #{searchFilterDTO.keyword}, '%')
+                        </if>
+                        <if test="field == 'content'">
+                            AND p.content LIKE CONCAT('%', #{searchFilterDTO.keyword}, '%')
+                        </if>
+                        <if test="field == 'comment'">
+                            AND cm.content LIKE CONCAT('%', #{searchFilterDTO.keyword}, '%')
+                        </if>
+                    </foreach>
                 </otherwise>
             </choose>
         </if>
@@ -220,10 +220,8 @@
         <!-- ✅ 키워드 검색 -->
         <if test="searchFilterDTO.keyword != null and searchFilterDTO.keyword != ''">
             <choose>
-                <!-- 통합검색 모드: 아무 필터 체크 안 된 경우 OR로 묶기 -->
-                <when test="(searchFilterDTO.titleChecked == null or !searchFilterDTO.titleChecked)
-                  and (searchFilterDTO.contentChecked == null or !searchFilterDTO.contentChecked)
-                  and (searchFilterDTO.commentChecked == null or !searchFilterDTO.commentChecked)">
+                <!-- 아무 체크도 안 된 경우: 통합검색 -->
+                <when test="searchFilterDTO.searchFields == null or searchFilterDTO.searchFields.size == 0">
                     AND (
                     p.title LIKE CONCAT('%', #{searchFilterDTO.keyword}, '%')
                     OR p.content LIKE CONCAT('%', #{searchFilterDTO.keyword}, '%')
@@ -231,17 +229,19 @@
                     )
                 </when>
 
-                <!-- 상세검색 모드: 개별 필터에 따라 AND 조건 -->
+                <!-- 특정 필드만 선택된 경우 -->
                 <otherwise>
-                    <if test="searchFilterDTO.titleChecked">
-                        AND p.title LIKE CONCAT('%', #{searchFilterDTO.keyword}, '%')
-                    </if>
-                    <if test="searchFilterDTO.contentChecked">
-                        AND p.content LIKE CONCAT('%', #{searchFilterDTO.keyword}, '%')
-                    </if>
-                    <if test="searchFilterDTO.commentChecked">
-                        AND cm.content LIKE CONCAT('%', #{searchFilterDTO.keyword}, '%')
-                    </if>
+                    <foreach collection="searchFilterDTO.searchFields" item="field">
+                        <if test="field == 'title'">
+                            AND p.title LIKE CONCAT('%', #{searchFilterDTO.keyword}, '%')
+                        </if>
+                        <if test="field == 'content'">
+                            AND p.content LIKE CONCAT('%', #{searchFilterDTO.keyword}, '%')
+                        </if>
+                        <if test="field == 'comment'">
+                            AND cm.content LIKE CONCAT('%', #{searchFilterDTO.keyword}, '%')
+                        </if>
+                    </foreach>
                 </otherwise>
             </choose>
         </if>

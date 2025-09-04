@@ -1,81 +1,50 @@
-// src/pages/SearchPage.tsx
 import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { searchPosts } from '@/api/searchApi';
 import type { SearchApiResponse } from '@/api/searchApi';
 import type { SearchFilter } from '@/types/SearchFilter';
 import Pagination from '@/components/common/Pagination';
+import PostSearchFilter from '@/components/search/PostSearchFilter';
 
 export default function SearchPage() {
   const navigate = useNavigate();
 
+  // ✅ URL query에서 keyword 꺼내오기
   const [searchParams] = useSearchParams();
   const initialKeyword = searchParams.get('keyword') || '';
+
+  // ✅ 검색 필터 상태 (전부 POST body로 전달됨)
   const [filter, setFilter] = useState<SearchFilter>({
     keyword: initialKeyword,
+    searchFields: [],
   });
 
   const [data, setData] = useState<SearchApiResponse | null>(null);
   const [page, setPage] = useState(1);
 
-  //   const [filter, setFilter] = useState<SearchFilter>({
-  //     keyword: '',
-  //     categoryId: undefined,
-  //     writer: '',
-  //     tag: '',
-  //   });
-
+  // ✅ page 또는 filter가 바뀌면 API 호출
   useEffect(() => {
     loadData();
-  }, [page]);
+  }, [page, filter]);
 
   const loadData = async () => {
-    const res = await searchPosts({ ...filter, page, size: 10 });
+    const res = await searchPosts(filter, page, 10); // ✅ 변경
     console.log('검색결과', res);
     setData(res);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setPage(1);
-    loadData();
-  };
-
   return (
     <div className="max-w-5xl mx-auto p-6">
-      {/* 검색폼 */}
-      <form onSubmit={handleSubmit} className="flex gap-2 mb-6">
-        <input
-          type="text"
-          placeholder="검색어를 입력하세요"
-          value={filter.keyword}
-          onChange={(e) => setFilter({ ...filter, keyword: e.target.value })}
-          className="flex-1 border rounded px-3 py-2"
-        />
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          검색
-        </button>
-      </form>
-
-      {/* 카테고리 필터 */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        {data?.categories.map((cat) => (
-          <button
-            key={cat.id}
-            onClick={() => setFilter((prev) => ({ ...prev, categoryId: cat.id }))}
-            className={`px-3 py-1 rounded border ${
-              filter.categoryId === cat.id
-                ? 'bg-blue-500 text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-100'
-            }`}
-          >
-            {cat.name}
-          </button>
-        ))}
-      </div>
+      {/* 🔍 검색 필터 박스 */}
+      <PostSearchFilter
+        categories={data?.categories || []}
+        filter={filter}
+        onChange={setFilter}
+        onSearch={() => {
+          setPage(1);
+          loadData();
+        }}
+      />
 
       {/* 검색 결과 개수 */}
       {data && (
@@ -87,7 +56,6 @@ export default function SearchPage() {
 
       {/* 검색 결과 */}
       <div className="space-y-4">
-        {/* 검색 결과 없음 */}
         {data?.result?.dtoList?.length === 0 && (
           <div className="p-6 text-center text-gray-500 border rounded bg-gray-50">
             검색 결과가 없습니다.
@@ -100,23 +68,17 @@ export default function SearchPage() {
             className="p-5 bg-white border rounded-lg shadow-sm 
                  hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01]
                  transform transition duration-300 cursor-pointer"
-            onClick={() => navigate(`/posts/${item.postId}`)} // ✅ 상세로 이동
+            onClick={() => navigate(`/posts/${item.postId}`)}
           >
-            {/* 제목 (하이라이트 적용) */}
             <h3
               className="font-bold text-lg mb-2 text-gray-800"
               dangerouslySetInnerHTML={{
                 __html: item.highlightedTitle || item.title,
               }}
             />
-
-            {/* 구분선 */}
             <hr className="my-3" />
-
-            {/* 메타정보 */}
             <div className="flex flex-wrap items-center text-sm text-gray-500 gap-4">
               <span className="flex items-center gap-1">📂 {item.categoryName}</span>
-              <span className="flex items-center gap-1">📂 {item.title}</span>
               <span className="flex items-center gap-1">✍️ {item.writerName}</span>
               <span className="flex items-center gap-1">
                 🗓 {new Date(item.createdAt).toLocaleDateString()}
