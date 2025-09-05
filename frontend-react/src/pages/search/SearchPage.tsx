@@ -1,51 +1,37 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import type { RootState } from '@/store';
 import { searchPosts } from '@/api/searchApi';
 import type { SearchApiResponse } from '@/api/searchApi';
-import type { SearchFilter } from '@/types/SearchFilter';
 import Pagination from '@/components/common/Pagination';
-import PostSearchFilter from '@/components/search/PostSearchFilter';
 
 export default function SearchPage() {
   const navigate = useNavigate();
-
-  // ✅ URL query에서 keyword 꺼내오기
-  const [searchParams] = useSearchParams();
-  const initialKeyword = searchParams.get('keyword') || '';
-
-  // ✅ 검색 필터 상태 (전부 POST body로 전달됨)
-  const [filter, setFilter] = useState<SearchFilter>({
-    keyword: initialKeyword,
-    searchFields: [],
-  });
+  const searchCondition = useSelector((state: RootState) => state.search);
 
   const [data, setData] = useState<SearchApiResponse | null>(null);
   const [page, setPage] = useState(1);
 
-  // ✅ page 또는 filter가 바뀌면 API 호출
+  // ✅ 조건/페이지 변경 시 검색 실행
   useEffect(() => {
-    loadData();
-  }, [page, filter]);
+    if (searchCondition.keyword) {
+      loadData(searchCondition, page);
+    }
+  }, [searchCondition, page]);
 
-  const loadData = async () => {
-    const res = await searchPosts(filter, page, 10); // ✅ 변경
-    console.log('검색결과', res);
-    setData(res);
+  const loadData = async (condition: typeof searchCondition, pageNum: number) => {
+    try {
+      const res = await searchPosts(condition, pageNum, 10);
+      setData(res);
+    } catch (err) {
+      console.error('검색 실패:', err);
+      setData(null);
+    }
   };
 
   return (
     <div className="max-w-5xl mx-auto p-6">
-      {/* 🔍 검색 필터 박스 */}
-      <PostSearchFilter
-        categories={data?.categories || []}
-        filter={filter}
-        onChange={setFilter}
-        onSearch={() => {
-          setPage(1);
-          loadData();
-        }}
-      />
-
       {/* 검색 결과 개수 */}
       {data && (
         <div className="mb-4 text-gray-600">
@@ -66,8 +52,8 @@ export default function SearchPage() {
           <div
             key={item.postId}
             className="p-5 bg-white border rounded-lg shadow-sm 
-                 hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01]
-                 transform transition duration-300 cursor-pointer"
+                     hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01]
+                     transform transition duration-300 cursor-pointer"
             onClick={() => navigate(`/posts/${item.postId}`)}
           >
             <h3
@@ -78,11 +64,9 @@ export default function SearchPage() {
             />
             <hr className="my-3" />
             <div className="flex flex-wrap items-center text-sm text-gray-500 gap-4">
-              <span className="flex items-center gap-1">📂 {item.categoryName}</span>
-              <span className="flex items-center gap-1">✍️ {item.writerName}</span>
-              <span className="flex items-center gap-1">
-                🗓 {new Date(item.createdAt).toLocaleDateString()}
-              </span>
+              <span>📂 {item.categoryName}</span>
+              <span>✍️ {item.writerName}</span>
+              <span>🗓 {new Date(item.createdAt).toLocaleDateString()}</span>
             </div>
           </div>
         ))}

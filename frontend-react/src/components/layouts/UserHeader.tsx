@@ -22,7 +22,8 @@ export default function UserHeader() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!keyword.trim()) return;
-    // /search?keyword=... 로 이동
+
+    dispatch(setKeyword(keyword));
     navigate(`/search?keyword=${encodeURIComponent(keyword)}`);
   };
 

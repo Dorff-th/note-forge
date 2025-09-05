@@ -1,3 +1,4 @@
+// src/api/searchApi.ts
 import axiosInstance from '@/api/axiosInstance';
 import type { PageResponse } from '@/types/Common';
 import type { SearchResult } from '@/types/SearchResult';
@@ -19,7 +20,13 @@ export async function searchPosts(
   size: number,
 ): Promise<SearchApiResponse> {
   const payload = {
-    searchFilterDTO: filter,
+    searchFilterDTO: {
+      keyword: filter.keyword,
+      categoryId: filter.categoryId === 'all' ? null : filter.categoryId,
+      searchFields: filter.searchFields,
+      dateFrom: filter.dateFrom || null,
+      dateTo: filter.dateTo || null,
+    },
     pageRequestDTO: {
       page,
       size,

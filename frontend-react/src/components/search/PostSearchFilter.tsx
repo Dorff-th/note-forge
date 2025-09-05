@@ -1,8 +1,4 @@
-//import { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import type { SearchFilter } from '@/types/SearchFilter';
-import type { RootState } from '@store/index';
-import { setKeyword } from '@/store/slices/searchSlice';
 
 interface Category {
   id: number;
@@ -13,7 +9,7 @@ interface PostSearchFilterProps {
   categories: Category[];
   filter: SearchFilter;
   onChange: (filter: SearchFilter) => void;
-  onSearch: () => void;
+  onSearch: () => void; // SearchPage에서 handleSearch 전달
 }
 
 export default function PostSearchFilter({
@@ -22,10 +18,7 @@ export default function PostSearchFilter({
   onChange,
   onSearch,
 }: PostSearchFilterProps) {
-  //const [localKeyword, setLocalKeyword] = useState(filter.keyword || '');
-  const keyword = useSelector((state: RootState) => state.search.keyword);
-  const dispatch = useDispatch();
-
+  // ✅ 체크박스 토글
   const handleFieldToggle = (field: string) => {
     const exists = filter.searchFields?.includes(field);
     onChange({
@@ -36,38 +29,21 @@ export default function PostSearchFilter({
     });
   };
 
+  // ✅ 카테고리 클릭
+  const handleCategoryClick = (catId: number) => {
+    onChange({ ...filter, categoryId: catId });
+    onSearch(); // 필터 적용 즉시 검색
+  };
+
   return (
     <div className="mb-6 p-4 border rounded bg-white shadow-sm">
-      {/* 검색어 입력 */}
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          onChange({ ...filter, keyword: keyword });
-          onSearch();
-        }}
-        className="flex gap-2 mb-4"
-      >
-        <input
-          type="text"
-          placeholder="검색어를 입력하세요"
-          value={keyword}
-          onChange={(e) => dispatch(setKeyword(e.target.value))}
-          className="flex-1 border rounded px-3 py-2"
-        />
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          상세검색
-        </button>
-      </form>
-
       {/* 카테고리 버튼 */}
       <div className="flex flex-wrap gap-2 mb-4">
         {categories.map((cat) => (
           <button
             key={cat.id}
-            onClick={() => onChange({ ...filter, categoryId: cat.id })}
+            type="button"
+            onClick={() => handleCategoryClick(cat.id)}
             className={`px-3 py-1 rounded border ${
               filter.categoryId === cat.id
                 ? 'bg-blue-500 text-white'
