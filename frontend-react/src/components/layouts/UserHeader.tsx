@@ -1,17 +1,18 @@
 // src/components/layout/UserHeader.tsx
-import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, LogOut } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '@store/slices/authSlice';
 import type { RootState } from '@store/index';
+import { setKeyword } from '@/store/slices/searchSlice';
 import Avatar from '@/components/common/Avatar';
 
 export default function UserHeader() {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
 
-  const [keyword, setKeyword] = useState('');
+  const keyword = useSelector((state: RootState) => state.search.keyword);
+
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -45,7 +46,7 @@ export default function UserHeader() {
               type="text"
               placeholder="Search..."
               value={keyword}
-              onChange={(e) => setKeyword(e.target.value)}
+              onChange={(e) => dispatch(setKeyword(e.target.value))}
               className="w-full border rounded-md py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             />
             <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
