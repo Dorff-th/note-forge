@@ -4,7 +4,6 @@ import type { PostDTO, PostDetailDTO } from '@/types/Post';
 import type { PageResponse } from '@/types/Common';
 import type { CommentResponse } from '@/types/Comment';
 import type { Tag } from '@/types/Tag';
-import type { Category } from '@/types/Category';
 
 export const fetchPosts = async (
   page: number,
@@ -49,9 +48,3 @@ export const fetchPostsByTag = async (
   });
   return response.data;
 };
-
-//카테고리 목록 조회
-export async function fetchCategories(): Promise<Category[]> {
-  const res = await axiosInstance.get('/categories');
-  return res.data;
-}
