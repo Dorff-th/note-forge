@@ -1,5 +1,8 @@
-import { useState } from 'react';
+//import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import type { SearchFilter } from '@/types/SearchFilter';
+import type { RootState } from '@store/index';
+import { setKeyword } from '@/store/slices/searchSlice';
 
 interface Category {
   id: number;
@@ -19,7 +22,9 @@ export default function PostSearchFilter({
   onChange,
   onSearch,
 }: PostSearchFilterProps) {
-  const [localKeyword, setLocalKeyword] = useState(filter.keyword || '');
+  //const [localKeyword, setLocalKeyword] = useState(filter.keyword || '');
+  const keyword = useSelector((state: RootState) => state.search.keyword);
+  const dispatch = useDispatch();
 
   const handleFieldToggle = (field: string) => {
     const exists = filter.searchFields?.includes(field);
@@ -37,7 +42,7 @@ export default function PostSearchFilter({
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          onChange({ ...filter, keyword: localKeyword });
+          onChange({ ...filter, keyword: keyword });
           onSearch();
         }}
         className="flex gap-2 mb-4"
@@ -45,15 +50,15 @@ export default function PostSearchFilter({
         <input
           type="text"
           placeholder="검색어를 입력하세요"
-          value={localKeyword}
-          onChange={(e) => setLocalKeyword(e.target.value)}
+          value={keyword}
+          onChange={(e) => dispatch(setKeyword(e.target.value))}
           className="flex-1 border rounded px-3 py-2"
         />
         <button
           type="submit"
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
-          검색
+          상세검색
         </button>
       </form>
 

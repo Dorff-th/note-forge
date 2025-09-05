@@ -1,5 +1,6 @@
 // src/components/layout/UserHeader.tsx
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Search, LogOut } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '@store/slices/authSlice';
@@ -10,8 +11,18 @@ export default function UserHeader() {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
 
+  const [keyword, setKeyword] = useState('');
+  const navigate = useNavigate();
+
   const handleLogout = () => {
     dispatch(logout());
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!keyword.trim()) return;
+    // /search?keyword=... 로 이동
+    navigate(`/search?keyword=${encodeURIComponent(keyword)}`);
   };
 
   return (
@@ -29,12 +40,16 @@ export default function UserHeader() {
       {/* 중앙 검색 */}
       <div className="flex-1 max-w-lg mx-6">
         <div className="relative">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="w-full border rounded-md py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-          />
-          <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              placeholder="Search..."
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              className="w-full border rounded-md py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            />
+            <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+          </form>
         </div>
       </div>
 

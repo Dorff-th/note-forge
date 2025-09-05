@@ -1,12 +1,16 @@
 // src/components/layout/PublicHeader.tsx
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Search } from 'lucide-react';
+import { useSelector, useDispatch } from 'react-redux';
+import type { RootState } from '@store/index';
+import { setKeyword } from '@/store/slices/searchSlice';
 
 export default function PublicHeader() {
-  const [keyword, setKeyword] = useState('');
+  //const [keyword, setKeyword] = useState('');
   const navigate = useNavigate();
+
+  const keyword = useSelector((state: RootState) => state.search.keyword);
+  const dispatch = useDispatch();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +39,7 @@ export default function PublicHeader() {
               type="text"
               placeholder="Search..."
               value={keyword}
-              onChange={(e) => setKeyword(e.target.value)}
+              onChange={(e) => dispatch(setKeyword(e.target.value))}
               className="w-full border rounded-md py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             />
             <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />

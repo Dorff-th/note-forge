@@ -2,12 +2,14 @@ import { configureStore } from '@reduxjs/toolkit';
 import authReducer from '@store/slices/authSlice';
 import loadingReducer from '@store/slices/loadingSlice';
 import toastReducer from '@store/slices/toastSlice';
+import searchReducer from './slices/searchSlice'; // ✅ 추가
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     loading: loadingReducer,
     toast: toastReducer,
+    search: searchReducer, // ✅ 추가
   },
 });
 
