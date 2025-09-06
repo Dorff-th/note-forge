@@ -32,6 +32,9 @@ dependencies {
 
     //유효성 체크
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    //Thumbnailator
+    implementation 'net.coobird:thumbnailator:0.4.20'
 }
 
 test {

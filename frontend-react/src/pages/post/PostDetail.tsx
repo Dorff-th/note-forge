@@ -7,6 +7,7 @@ import ConfirmModal from '@/components/common/ConfirmModal';
 import { withToast } from '@/utils/withToast';
 import UserComment from '@/components/user/UserComment';
 import type { Tag } from '@/types/Tag';
+import { backendBaseUrl } from '@/config';
 
 export default function PostDetail() {
   const { id } = useParams<{ id: string }>();
@@ -33,8 +34,6 @@ export default function PostDetail() {
   //todo 삭제 기능 구현
 
   if (!post) return <div className="p-6">로딩중...</div>;
-
-  const backendBaseUrl = import.meta.env.VITE_API_BASE_URL.replace(/\/api$/, '');
 
   return (
     <div className="p-6">

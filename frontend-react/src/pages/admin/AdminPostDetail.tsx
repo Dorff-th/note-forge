@@ -6,6 +6,7 @@ import { Viewer } from '@toast-ui/react-editor';
 import ConfirmModal from '@/components/common/ConfirmModal';
 import { withToast } from '@/utils/withToast';
 import AdminComment from '@/components/admin/AdminComment';
+import { backendBaseUrl } from '@/config';
 
 export default function AdminPostDetail() {
   const { id } = useParams<{ id: string }>();
@@ -33,10 +34,6 @@ export default function AdminPostDetail() {
   };
 
   if (!post) return <div className="p-6">로딩중...</div>;
-
-  //const backendBaseUrl = 'http://localhost:8080';
-  //const backendBaseUrl = import.meta.env.VITE_API_BASE_URL;
-  const backendBaseUrl = import.meta.env.VITE_API_BASE_URL.replace(/\/api$/, '');
 
   return (
     <div className="p-6">

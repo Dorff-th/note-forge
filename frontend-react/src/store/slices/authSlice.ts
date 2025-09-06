@@ -63,8 +63,15 @@ const authSlice = createSlice({
       localStorage.removeItem('accessToken');
       localStorage.removeItem('user');
     },
+    // ✅ 프로필 이미지 변경 (닉네임 변경 등도 재활용 가능)
+    updateUser: (state, action: PayloadAction<Partial<User>>) => {
+      if (state.user) {
+        state.user = { ...state.user, ...action.payload };
+        localStorage.setItem('user', JSON.stringify(state.user));
+      }
+    },
   },
 });
 
-export const { logout, loginSuccess } = authSlice.actions;
+export const { logout, loginSuccess, updateUser } = authSlice.actions;
 export default authSlice.reducer;
