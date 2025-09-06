@@ -5,10 +5,7 @@ import dev.noteforge.knowhub.member.enums.MemberStatus;
 import dev.noteforge.knowhub.comment.domain.Comment;
 import dev.noteforge.knowhub.post.domain.Post;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -46,6 +43,8 @@ public class Member {
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
 
     // 사용자(member) 1 : N 게시물(post)
     @OneToMany(fetch = FetchType.LAZY)

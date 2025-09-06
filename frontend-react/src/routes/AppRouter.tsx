@@ -16,6 +16,7 @@ import PostListPage from '@/pages/post/PostListPage';
 import PostDetail from '@/pages/post/PostDetail';
 import TagPostListPage from '@/pages/post/TagPostListPage';
 import SearchPage from '@/pages/search/SearchPage';
+import UserProfilePage from '@/pages/user/UserProfilePage';
 
 const AppRouter = () => {
   const { token, user } = useAppSelector((state) => state.auth);
@@ -68,7 +69,8 @@ const AppRouter = () => {
         }
       >
         {/* 사용자 홈 */}
-        <Route path="/user/home" element={<UserHomePage />} />
+        <Route path="home" element={<UserHomePage />} />
+        <Route path="profile" element={<UserProfilePage />} />
       </Route>
 
       {/* ADMIN 라우트 */}
