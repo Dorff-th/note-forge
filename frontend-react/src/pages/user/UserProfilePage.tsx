@@ -44,7 +44,7 @@ export default function UserProfilePage() {
             <img
               src={
                 profile.profileImageUrl
-                  ? `${backendBaseUrl}${profile.profileImageUrl}`
+                  ? `${backendBaseUrl}${profile.profileImageUrl}?t=${new Date().getTime()}` // 캐싱 방지
                   : '/default.png'
               }
               alt="프로필 이미지"

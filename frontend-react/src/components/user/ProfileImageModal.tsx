@@ -47,6 +47,9 @@ export default function ProfileImageModal({ isOpen, onClose, onSuccess }: Profil
         success: '프로필 이미지가 삭제되었습니다.',
         error: '삭제에 실패했습니다.',
       });
+
+      // 🔹 Redux 상태 갱신 (profileImageUrl을 null로 초기화)
+      dispatch(updateUser({ profileImageUrl: null }));
       onSuccess();
       onClose();
     } finally {

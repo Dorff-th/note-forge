@@ -58,10 +58,10 @@ export default function UserHeader() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <div className="bg-gray-50">
       {/* 🔹 헤더 */}
       <header className="flex flex-col bg-white shadow-sm border-b">
-        <div className="flex items-center justify-between px-6 py-4">
+        <div className="flex items-center justify-between px-6 py-2">
           {/* 좌측 로고 & 메뉴 */}
           <div className="flex items-center space-x-6">
             <Link to="/" className="text-xl font-bold text-gray-800">
@@ -133,7 +133,7 @@ export default function UserHeader() {
       </header>
 
       {/* 🔹 자식 라우트 출력 자리 */}
-      <main className="flex-1 p-6">
+      <main className="flex-1 px-6 pt-6">
         <Outlet />
       </main>
     </div>
