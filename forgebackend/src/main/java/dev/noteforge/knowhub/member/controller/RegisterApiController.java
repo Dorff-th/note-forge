@@ -1,13 +1,12 @@
 package dev.noteforge.knowhub.member.controller;
 
 import dev.noteforge.knowhub.common.exception.DuplicateResourceException;
+import dev.noteforge.knowhub.member.dto.RegisterRequestDTO;
 import dev.noteforge.knowhub.member.service.MemberService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -16,7 +15,7 @@ import java.util.Map;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/register")
+@RequestMapping("/api/auth/register")
 public class RegisterApiController {
 
     final private MemberService memberService;
@@ -37,6 +36,12 @@ public class RegisterApiController {
             throw new DuplicateResourceException("Duplicate.nickname");
         }
         return ResponseEntity.ok(Map.of("duplicate", false));
+    }
+
+    @PostMapping
+    public ResponseEntity<Void> register(@Valid @RequestBody RegisterRequestDTO dto) {
+        memberService.register(dto);
+        return ResponseEntity.ok().build();
     }
 
 }

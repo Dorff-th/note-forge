@@ -17,6 +17,7 @@ import PostDetail from '@/pages/post/PostDetail';
 import TagPostListPage from '@/pages/post/TagPostListPage';
 import SearchPage from '@/pages/search/SearchPage';
 import UserProfilePage from '@/pages/user/UserProfilePage';
+import UserRegisterPage from '@/pages/user/UserRegisterPage';
 
 const AppRouter = () => {
   const { token, user } = useAppSelector((state) => state.auth);
@@ -61,6 +62,9 @@ const AppRouter = () => {
 
       {/* 로그인 */}
       <Route path="/login" element={<LoginPage />} />
+
+      {/* 사용자 등록 */}
+      <Route path="/register" element={<UserRegisterPage />} />
 
       <Route
         path="/user"

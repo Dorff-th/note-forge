@@ -5,6 +5,7 @@ import dev.noteforge.knowhub.common.exception.DuplicateResourceException;
 import dev.noteforge.knowhub.member.domain.Member;
 import dev.noteforge.knowhub.member.dto.MemberProfileResponse;
 import dev.noteforge.knowhub.member.dto.RegisterRequestDTO;
+import dev.noteforge.knowhub.member.enums.MemberStatus;
 import dev.noteforge.knowhub.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +47,7 @@ public class MemberService {
 
         String encrypted = bCryptPasswordEncoder.encode(dto.getPassword());
 
-        Member member = new Member(dto.getEmail(), encrypted, RoleType.USER, dto.getNickname());
+        Member member = new Member(dto.getEmail(), encrypted, RoleType.USER, dto.getNickname(), MemberStatus.INACTIVE, false);
 
         memberRepository.save(member);
     }

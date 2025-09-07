@@ -53,9 +53,9 @@ public class Member {
     @OneToMany(fetch = FetchType.LAZY)
     private List<Comment> comments;
 
-    private String profileImageName;    // 사용자 프로필 이미지 원본파일 명
+    private String profileImageName;    // 사용자 프로필 이미지 원본파일 명 (현재 미사용)
 
-    private String profileImagePath;    // 사용자 프로필 이미지 서버 저장 경로
+    private String profileImagePath;    // 사용자 프로필 이미지 서버 저장 경로 (현재 미사용)
 
     private String profileImageUrl;     // 사용자 프로필 이미지 공개 경로
 
@@ -64,12 +64,14 @@ public class Member {
 
     private boolean deleted = false; // true = 탈퇴   // 탈퇴 회원일 경우 true (1) 로
 
-  public Member(String email, String password, RoleType role, String nickname) {
+  public Member(String email, String password, RoleType role, String nickname, MemberStatus status, boolean deleted) {
         this.username = email;  // username에도 email 들어가게(email을 아이디 처럼 사용하고 싶어서)
         this.email = email;
         this.password = password;
         this.role = role;
         this.nickname = nickname;
+        this.status = status;
+        this.deleted = deleted;
     }
 
 }

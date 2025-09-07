@@ -114,7 +114,7 @@ export default function LoginPage() {
 
         {/* 하단 링크 */}
         <div className="flex justify-between text-sm text-gray-500 mt-8">
-          <a href="#" className="hover:text-indigo-600">
+          <a href="/register" className="hover:text-indigo-600">
             회원가입
           </a>
           <a href="#" className="hover:text-indigo-600">
