@@ -12,6 +12,7 @@ export default function PostForm() {
   const editorRef = useRef<Editor>(null);
   const [title, setTitle] = useState('');
   const [categoryId, setCategoryId] = useState<number | undefined>(undefined);
+  const [tags, setTags] = useState<string[]>([]);
 
   // ✅ 최종 저장 핸들러
   const handleSubmit = async (e: React.FormEvent) => {
@@ -62,6 +63,7 @@ export default function PostForm() {
       title,
       categoryId,
       content,
+      tags: tags.join(','),
     });
   };
 
@@ -70,7 +72,7 @@ export default function PostForm() {
       <CategorySelect value={categoryId} onChange={setCategoryId} />
       <PostTitleInput value={title} onChange={setTitle} />
       <PostContentEditor ref={editorRef} />
-      <PostTagInput />
+      <PostTagInput value={tags} onChange={setTags} />
       <AttachmentUploader />
       <FormActions />
     </form>
