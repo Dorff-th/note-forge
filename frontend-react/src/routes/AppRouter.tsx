@@ -18,6 +18,8 @@ import TagPostListPage from '@/pages/post/TagPostListPage';
 import SearchPage from '@/pages/search/SearchPage';
 import UserProfilePage from '@/pages/user/UserProfilePage';
 import UserRegisterPage from '@/pages/user/UserRegisterPage';
+import PostWritePage from '@/pages/post/PostWritePage';
+import PostEditPage from '@/pages/post/PostEditPage';
 
 const AppRouter = () => {
   const { token, user } = useAppSelector((state) => state.auth);
@@ -65,6 +67,23 @@ const AppRouter = () => {
 
       {/* 사용자 등록 */}
       <Route path="/register" element={<UserRegisterPage />} />
+
+      <Route element={<UserHeader />}>
+        {/* 게시글 작성 */}
+        <Route
+          path="/posts/new"
+          element={
+            token && user?.role === 'ROLE_USER' ? <PostWritePage /> : <Navigate to="/login" />
+          }
+        />
+        {/* 게시글 수정 */}
+        <Route
+          path="/posts/:id/edit"
+          element={
+            token && user?.role === 'ROLE_USER' ? <PostEditPage /> : <Navigate to="/login" />
+          }
+        />
+      </Route>
 
       <Route
         path="/user"

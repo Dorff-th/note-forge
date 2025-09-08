@@ -55,25 +55,7 @@ public class ImageUploadService {
 
     }
 
-    //일반 첨부파일 저장(다중 파일 업로드)
-    public List<Attachment> uploadAttachments(Post post,  List<FileSaveResultDTO> fileResults) {
 
-        List<Attachment> attachments = fileResults.stream()
-                .map(dto -> Attachment.builder()
-                        .post(post)
-                        .fileName(dto.getFileName())
-                        .originFileName(dto.getOriginFileName())
-                        .fileType(dto.getFileType())
-                        .fileSize(dto.getSize())
-                        .fileUrl(dto.getFileUrl())
-                        .uploadType(dto.getUploadType())
-                        .uploadedAt(LocalDateTime.now())
-                        .build())
-                .toList();
-
-
-        return imageUploadRepository.saveAll(attachments);
-    }
 
     //작성중인 post에 첨부한(삽입한) 이미지를 다시 삭제할때 삭제 대상 file_name으로 찾아서 삭제
     @Transactional

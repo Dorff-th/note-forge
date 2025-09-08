@@ -2,19 +2,22 @@ package dev.noteforge.knowhub.post.controller;
 
 import dev.noteforge.knowhub.common.dto.PageRequestDTO;
 import dev.noteforge.knowhub.common.dto.PageResponseDTO;
+import dev.noteforge.knowhub.member.domain.Member;
+import dev.noteforge.knowhub.member.security.MemberDetails;
+import dev.noteforge.knowhub.post.domain.Post;
 import dev.noteforge.knowhub.post.dto.PostDTO;
 import dev.noteforge.knowhub.post.dto.PostDetailDTO;
+import dev.noteforge.knowhub.post.dto.PostRequestDTO;
 import dev.noteforge.knowhub.post.service.PostService;
 import dev.noteforge.knowhub.tag.dto.TagDTO;
 
 import dev.noteforge.knowhub.tag.dto.TagResponse;
 import dev.noteforge.knowhub.tag.service.PostTagService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -66,6 +69,17 @@ public class PostController {
                 )
                 .collect(Collectors.toList());
         return ResponseEntity.ok(tags);
+    }
+
+    @PostMapping
+    public ResponseEntity<?> createPost(
+            @AuthenticationPrincipal MemberDetails loginUser,
+            @Valid @RequestBody PostRequestDTO dto
+    ) {
+        Member member = loginUser.getMember();
+        Post saved = postService.createPost(dto, member);
+
+        return ResponseEntity.ok(saved.getId()); // 일단 ID만 반환
     }
 
 }

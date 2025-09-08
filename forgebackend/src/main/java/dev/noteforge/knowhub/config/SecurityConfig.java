@@ -43,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/posts/**").hasRole("USER")
                         .requestMatchers(HttpMethod.DELETE, "/api/posts/**").hasRole("USER")
                         .requestMatchers("/api/members/**").hasRole("USER")
+                        .requestMatchers("/api/images/upload").hasRole("USER")
                         .requestMatchers("/", "/posts", "/posts/**", "/api/**", "/search/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll() // 로그인, 회원가입 등은 허용
                         .requestMatchers("/uploads/**").permitAll()

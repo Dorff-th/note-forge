@@ -26,7 +26,7 @@ public class PostRequestDTO {
 
     private Long categoryId;
 
-    private String tempKey;
+    //private String tempKey;
 
     //첨부파일
     List<MultipartFile> attachments;

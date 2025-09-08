@@ -130,13 +130,15 @@ public class PostService {
     }
 
     @Transactional
-    public Post createPost(PostRequestDTO dto) {
-        Member member = memberRepository.findById(dto.getMemberId()).orElseThrow(()->new IllegalArgumentException("사용자가 없습니다."));
+    public Post createPost(PostRequestDTO dto, Member member) {
+        //Member member = memberRepository.findById(dto.getMemberId()).orElseThrow(()->new IllegalArgumentException("사용자가 없습니다."));
         Category category = categoryRepository.findById(dto.getCategoryId()).orElseThrow(()->new IllegalArgumentException("카테고리가 없습니다."));
 
         Post post = new Post(dto.getTitle(), dto.getContent(), member, category);
 
         Post savedPost = postRepository.save(post);
+
+
 
         //첨부파일 저장
         if(dto.getAttachments() != null && !dto.getAttachments().isEmpty()  ) {
@@ -160,11 +162,11 @@ public class PostService {
         }
 
         //에디터에 첨부된 이미지 파일 정보에 저장된 post id 업데이트
-        String tempKey = dto.getTempKey();
+        /*String tempKey = dto.getTempKey();
         boolean existsByTempKey = imageUploadRepository.existsByTempKey(tempKey);
         if(existsByTempKey) {
             imageUploadRepository.updatePostIdByTempKey(savedPost.getId(), tempKey);
-        }
+        }*/
 
         //태그 & post_tag 관계 저장
         if (dto.getTags() != null) {
