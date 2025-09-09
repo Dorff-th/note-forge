@@ -8,23 +8,29 @@ import dev.noteforge.knowhub.post.domain.Post;
 import dev.noteforge.knowhub.post.dto.PostDTO;
 import dev.noteforge.knowhub.post.dto.PostDetailDTO;
 import dev.noteforge.knowhub.post.dto.PostRequestDTO;
+import dev.noteforge.knowhub.post.dto.PostUpdateDTO;
 import dev.noteforge.knowhub.post.service.PostService;
 import dev.noteforge.knowhub.tag.dto.TagDTO;
 
 import dev.noteforge.knowhub.tag.dto.TagResponse;
 import dev.noteforge.knowhub.tag.service.PostTagService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/posts")
+@Slf4j
 public class PostController {
 
     private final PostService postService;
@@ -51,9 +57,10 @@ public class PostController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<PostDetailDTO> getPost(@PathVariable("id") Long id) {
-        return postService.getPost(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+
+        Optional<PostDetailDTO> resultDTO = postService.getPost(id);
+
+        return resultDTO.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     /**
@@ -71,6 +78,7 @@ public class PostController {
         return ResponseEntity.ok(tags);
     }
 
+    //신규 등록 요청
     @PostMapping
     public ResponseEntity<?> createPost(
             @AuthenticationPrincipal MemberDetails loginUser,
@@ -80,6 +88,30 @@ public class PostController {
         Post saved = postService.createPost(dto, member);
 
         return ResponseEntity.ok(saved.getId()); // 일단 ID만 반환
+    }
+
+    // ✅ 수정 (PUT) 요청
+    @PutMapping("/{id}")
+    public ResponseEntity<Long> updatePost(
+            @AuthenticationPrincipal MemberDetails loginUser,
+            @ModelAttribute PostUpdateDTO dto
+    ) {
+        // 1. 게시글 존재 여부 확인
+        Post post = postService.getPostById(dto.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Post가 존재하지 않습니다!"));
+
+        // 2. 권한 체크 (본인만 수정 가능)
+        if (!post.getMember().getId().equals(loginUser.getId())) {
+            throw new AccessDeniedException("권한이 없습니다.");
+        }
+
+        // 3. 작성자 정보 세팅
+        dto.setMemberId(loginUser.getId());
+
+        // 4. 업데이트 수행
+        Post updated = postService.editPost(dto);
+        // 5. postId 반환
+        return ResponseEntity.ok(updated.getId());
     }
 
 }

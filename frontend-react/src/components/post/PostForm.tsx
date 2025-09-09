@@ -10,11 +10,22 @@ import PostTagInput from './PostTagInput';
 import AttachmentUploader from './AttachmentUploader';
 import FormActions from './FormActions';
 import { showToast } from '@/store/slices/toastSlice'; // ✅ Redux 기반 Toast
+import type { PostDetailDTO } from '@/types/Post';
+import { fixContentForSave } from '@/utils/contentUrlHelper';
 
-export default function PostForm() {
+interface PostFormProps {
+  mode: 'write' | 'edit';
+  initialData?: PostDetailDTO;
+}
+
+export default function PostForm({ mode, initialData }: PostFormProps) {
   const editorRef = useRef<Editor>(null);
-  const [title, setTitle] = useState('');
-  const [categoryId, setCategoryId] = useState<number | undefined>(undefined);
+
+  const [categoryId, setCategoryId] = useState(initialData?.categoryId ?? 0);
+  const [title, setTitle] = useState(initialData?.title ?? '');
+
+  const [content, setContent] = useState(initialData?.content ?? '');
+
   const [tags, setTags] = useState<string[]>([]);
   const [attachments, setAttachments] = useState<File[]>([]);
 
@@ -35,8 +46,6 @@ export default function PostForm() {
     const blobRegex = /!\[.*?\]\((blob:[^)]+)\)/g;
     const matches = [...content.matchAll(blobRegex)];
 
-    console.log('blob matches:', matches);
-
     for (const match of matches) {
       const blobUrl = match[1];
 
@@ -51,9 +60,6 @@ export default function PostForm() {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
 
-        console.log('업로드 응답:', data);
-        console.log('업로드 응답:', data?.url);
-
         // 5. blob URL → 서버 URL 치환
         if (data?.url) {
           content = content.replace(blobUrl, data.url);
@@ -62,6 +68,8 @@ export default function PostForm() {
         console.error('이미지 업로드 중 오류:', err);
       }
     }
+
+    content = fixContentForSave(content);
 
     const formData = new FormData();
 
@@ -76,15 +84,27 @@ export default function PostForm() {
 
     // 6. 게시글 저장
     try {
-      const res = await axiosInstance.post('/posts', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      let res;
+
+      if (mode === 'write') {
+        res = await axiosInstance.post('/posts', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+      } else {
+        const postId = initialData?.id;
+        res = await axiosInstance.put(`/posts/${postId}`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+      }
 
       const postId = res.data;
       if (postId) {
         dispatch(
           showToast({
-            message: '게시글이 성공적으로 등록되었습니다.',
+            message:
+              mode === 'write'
+                ? '게시글이 성공적으로 등록되었습니다.'
+                : '게시글이 성공적으로 수정되었습니다.',
             type: 'success',
             duration: 4000, // ✅ 상세 페이지로 이동 후에도 4초 유지
           }),
@@ -102,7 +122,10 @@ export default function PostForm() {
       console.error('게시글 등록 실패', error);
       dispatch(
         showToast({
-          message: '게시글 등록에 실패했습니다. 다시 시도해주세요.',
+          message:
+            mode === 'write'
+              ? '게시글 등록에 실패했습니다. 다시 시도해주세요.'
+              : '게시글 수정에 실패했습니다. 다시 시도해주세요.',
           type: 'error',
         }),
       );
@@ -114,7 +137,7 @@ export default function PostForm() {
     <form onSubmit={handleSubmit} className="space-y-6">
       <CategorySelect value={categoryId} onChange={setCategoryId} />
       <PostTitleInput value={title} onChange={setTitle} />
-      <PostContentEditor ref={editorRef} />
+      <PostContentEditor ref={editorRef} value={content} onChange={setContent} />
       <PostTagInput value={tags} onChange={setTags} />
       <AttachmentUploader files={attachments} onChange={setAttachments} />
       <FormActions />

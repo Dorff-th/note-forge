@@ -52,4 +52,5 @@ public class PostDetailDTO {
     public void setAttachments(List<AttachmentViewDTO> attachments) {
         this.attachments = attachments;
     }
+
 }

@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import type { RootState } from '@store/index';
 import { fetchPostDetail, getPostTags } from '@/api/postApi';
 import type { PostDetailDTO } from '@/types/Post';
 import { Viewer } from '@toast-ui/react-editor';
@@ -30,6 +32,8 @@ export default function PostDetail() {
       .then(setTags)
       .catch(() => setTags([]));
   }, [postId]);
+
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
   //todo 삭제 기능 구현
 
@@ -91,6 +95,15 @@ export default function PostDetail() {
         >
           To List
         </button>
+
+        {isAuthenticated && (
+          <button
+            onClick={() => navigate(`/posts/${postId}/edit`)}
+            className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
+          >
+            To Edit
+          </button>
+        )}
         {/* <button
           onClick={() => setOpenConfirm(true)}
           className="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600"

@@ -28,6 +28,7 @@ import dev.noteforge.knowhub.tag.domain.PostTag;
 import dev.noteforge.knowhub.tag.domain.Tag;
 import dev.noteforge.knowhub.tag.repository.PostTagRepository;
 import dev.noteforge.knowhub.tag.service.TagService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -104,6 +105,7 @@ public class PostService {
                     dto.setId(post.getId());
                     dto.setTitle(post.getTitle());
                     dto.setContent(post.getContent());
+                    dto.setCategoryId(post.getCategoryId());
                     dto.setCategoryName(post.getCategoryName());
                     dto.setUsername(post.getUsername());
                     dto.setNickname(post.getNickname());
@@ -188,7 +190,7 @@ public class PostService {
 
 
     @Transactional
-    public int editPost(PostUpdateDTO dto) {
+    public Post  editPost(PostUpdateDTO dto) {
 
         Post post = postRepository.findById(dto.getId()).orElseThrow(()->new IllegalArgumentException("해당 post가 없음!"));
         if(dto.getAttachments() != null && !dto.getAttachments().isEmpty()  ) {
@@ -234,9 +236,17 @@ public class PostService {
             }
         }
 
+        // 본문/제목/카테고리 업데이트
+        int updatedCount = postRepository.updatePostById(dto);
+        if (updatedCount == 0) {
+            throw new EntityNotFoundException("업데이트 실패!");
+        }
+        // 다시 조회
+        Post updatedPost = postRepository.findById(dto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("업데이트 후 조회 실패!"));
 
 
-      return  postRepository.updatePostById(dto);
+        return updatedPost;
     }
 
 
