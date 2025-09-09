@@ -5,16 +5,16 @@ import { hideToast } from '@store/slices/toastSlice';
 
 const ToastContainer: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { message, type, visible } = useSelector((state: RootState) => state.toast);
+  const { message, type, visible, duration } = useSelector((state: RootState) => state.toast);
 
   useEffect(() => {
     if (visible) {
       const timer = setTimeout(() => {
         dispatch(hideToast());
-      }, 3000); // 3초 뒤 자동 닫힘
+      }, duration); // ✅ Redux에서 받은 지속시간 활용
       return () => clearTimeout(timer);
     }
-  }, [visible, dispatch]);
+  }, [visible, duration, dispatch]);
 
   if (!visible) return null;
 

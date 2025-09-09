@@ -5,12 +5,14 @@ interface ToastState {
   message: string;
   type: 'success' | 'error' | 'info' | 'warning';
   visible: boolean;
+  duration: number; // ✅ 새로 추가
 }
 
 const initialState: ToastState = {
   message: '',
   type: 'info',
   visible: false,
+  duration: 3000, // 기본 3초
 };
 
 const toastSlice = createSlice({
@@ -19,11 +21,16 @@ const toastSlice = createSlice({
   reducers: {
     showToast: (
       state,
-      action: PayloadAction<{ message: string; type: 'success' | 'error' | 'info' | 'warning' }>,
+      action: PayloadAction<{
+        message: string;
+        type: 'success' | 'error' | 'info' | 'warning';
+        duration?: number; // ✅ 선택적
+      }>,
     ) => {
       state.message = action.payload.message;
       state.type = action.payload.type;
       state.visible = true;
+      state.duration = action.payload.duration ?? 3000; // 기본값 3초
     },
     hideToast: (state) => {
       state.visible = false;

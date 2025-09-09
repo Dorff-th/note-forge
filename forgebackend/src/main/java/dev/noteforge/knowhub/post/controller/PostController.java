@@ -74,7 +74,7 @@ public class PostController {
     @PostMapping
     public ResponseEntity<?> createPost(
             @AuthenticationPrincipal MemberDetails loginUser,
-            @Valid @RequestBody PostRequestDTO dto
+            @Valid @ModelAttribute PostRequestDTO dto
     ) {
         Member member = loginUser.getMember();
         Post saved = postService.createPost(dto, member);
