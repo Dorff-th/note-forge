@@ -1,14 +1,29 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { fetchSuggest } from '@/api/tagApi';
+import { getPostTags } from '@/api/postApi'; // 📌 기존 태그 불러오기
+import type { Tag } from '@/types/Tag';
 
 interface PostTagInputProps {
-  value: string[];
-  onChange: (tags: string[]) => void;
+  postId?: number; // 수정 모드일 경우
+  value: Tag[];
+  onChange: (tags: Tag[], deleteTagIds: number[]) => void;
 }
 
-export default function PostTagInput({ value, onChange }: PostTagInputProps) {
+export default function PostTagInput({ postId, value, onChange }: PostTagInputProps) {
   const [inputValue, setInputValue] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [deleteTagIds, setDeleteTagIds] = useState<number[]>([]);
+  const [loaded, setLoaded] = useState(false);
+
+  // 🔹 수정 모드: 기존 태그 불러오기
+  useEffect(() => {
+    if (postId && !loaded) {
+      getPostTags(postId).then((res: Tag[]) => {
+        onChange(res, []); // 초기 세팅
+        setLoaded(true); // 한 번만 실행
+      });
+    }
+  }, [postId, loaded, onChange]);
 
   // 🔹 입력값 변경
   const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,12 +39,11 @@ export default function PostTagInput({ value, onChange }: PostTagInputProps) {
   };
 
   // 🔹 태그 추가 (# 제거 후 저장)
-  const addTag = (tag: string) => {
-    if (!tag) return;
-
-    const trimmed = tag.replace(/^#/, ''); // # 제거
-    if (!value.includes(trimmed)) {
-      onChange([...value, trimmed]); // 상태에는 순수 문자열만 저장
+  const addTag = (name: string) => {
+    const trimmed = name.replace(/^#/, '');
+    if (!value.find((t) => t.name === trimmed)) {
+      const newTags = [...value, { id: 0, name: trimmed }]; // 신규 태그는 id=0
+      onChange(newTags, deleteTagIds);
     }
     setInputValue('');
     setSuggestions([]);
@@ -44,8 +58,16 @@ export default function PostTagInput({ value, onChange }: PostTagInputProps) {
   };
 
   // 🔹 태그 삭제
-  const removeTag = (tag: string) => {
-    onChange(value.filter((t) => t !== tag));
+  const removeTag = (tag: Tag) => {
+    const updated = value.filter((t) => t.name !== tag.name);
+    let updatedDeleteIds = [...deleteTagIds];
+
+    if (tag.id && tag.id !== 0) {
+      updatedDeleteIds.push(tag.id);
+      setDeleteTagIds(updatedDeleteIds);
+    }
+
+    onChange(updated, updatedDeleteIds);
   };
 
   return (
@@ -54,8 +76,11 @@ export default function PostTagInput({ value, onChange }: PostTagInputProps) {
       <div className="flex flex-wrap gap-2 border rounded p-2">
         {/* 태그칩 (표시할 때만 # 붙임) */}
         {value.map((tag) => (
-          <span key={tag} className="flex items-center bg-gray-200 rounded px-2 py-1 text-sm">
-            #{tag}
+          <span
+            key={tag.id || tag.name}
+            className="flex items-center bg-gray-200 rounded px-2 py-1 text-sm"
+          >
+            #{tag.name}
             <button
               type="button"
               onClick={() => removeTag(tag)}
@@ -71,7 +96,12 @@ export default function PostTagInput({ value, onChange }: PostTagInputProps) {
           type="text"
           value={inputValue}
           onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ',') {
+              e.preventDefault();
+              addTag(inputValue.trim());
+            }
+          }}
           className="flex-1 outline-none"
           placeholder="태그 입력 (Enter 또는 ,)"
         />

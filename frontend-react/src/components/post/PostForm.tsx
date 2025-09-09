@@ -9,9 +9,10 @@ import PostContentEditor from './PostContentEditor';
 import PostTagInput from './PostTagInput';
 import AttachmentUploader from './AttachmentUploader';
 import FormActions from './FormActions';
-import { showToast } from '@/store/slices/toastSlice'; // ✅ Redux 기반 Toast
+import { showToast } from '@/store/slices/toastSlice';
 import type { PostDetailDTO } from '@/types/Post';
 import { fixContentForSave } from '@/utils/contentUrlHelper';
+import type { PostRequest } from '@/types/PostRequest';
 
 interface PostFormProps {
   mode: 'write' | 'edit';
@@ -20,17 +21,18 @@ interface PostFormProps {
 
 export default function PostForm({ mode, initialData }: PostFormProps) {
   const editorRef = useRef<Editor>(null);
-
-  const [categoryId, setCategoryId] = useState(initialData?.categoryId ?? 0);
-  const [title, setTitle] = useState(initialData?.title ?? '');
-
-  const [content, setContent] = useState(initialData?.content ?? '');
-
-  const [tags, setTags] = useState<string[]>([]);
-  const [attachments, setAttachments] = useState<File[]>([]);
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  // ✅ 단일 상태 객체
+  const [formData, setFormData] = useState<PostRequest>({
+    title: initialData?.title ?? '',
+    categoryId: initialData?.categoryId ?? 0,
+    content: initialData?.content ?? '',
+    tags: [],
+    deleteTagIds: [],
+    attachments: [],
+  });
 
   // ✅ 최종 저장 핸들러
   const handleSubmit = async (e: React.FormEvent) => {
@@ -39,28 +41,23 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
     const editorInstance = editorRef.current?.getInstance();
     if (!editorInstance) return;
 
-    // 1. 본문 가져오기 (blob URL 포함 상태)
     let content = editorInstance.getMarkdown();
 
-    // 2. blob URL 찾기
+    // blob URL → 서버 업로드
     const blobRegex = /!\[.*?\]\((blob:[^)]+)\)/g;
     const matches = [...content.matchAll(blobRegex)];
 
     for (const match of matches) {
       const blobUrl = match[1];
-
       try {
-        // 3. blob 추출
         const blob = await fetch(blobUrl).then((r) => r.blob());
-        const formData = new FormData();
-        formData.append('image', blob, 'upload.png');
+        const imgForm = new FormData();
+        imgForm.append('image', blob, 'upload.png');
 
-        // 4. 서버 업로드
-        const { data } = await axiosInstance.post('/images/upload', formData, {
+        const { data } = await axiosInstance.post('/images/upload', imgForm, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
 
-        // 5. blob URL → 서버 URL 치환
         if (data?.url) {
           content = content.replace(blobUrl, data.url);
         }
@@ -71,28 +68,30 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
 
     content = fixContentForSave(content);
 
-    const formData = new FormData();
+    // ✅ formData → FormData 변환
+    const fd = new FormData();
+    fd.append('title', formData.title);
+    fd.append('categoryId', String(formData.categoryId));
+    fd.append('content', content);
+    fd.append('tags', formData.tags.map((t) => t.name).join(','));
 
-    formData.append('title', title);
-    formData.append('categoryId', String(categoryId));
-    formData.append('content', content);
-    formData.append('tags', tags.join(',')); // 서버에서 String → split 처리
+    if (formData.deleteTagIds && formData.deleteTagIds.length > 0) {
+      fd.append('deleteTagIds', formData.deleteTagIds.join(','));
+    }
 
-    attachments.forEach((file) => {
-      formData.append('attachments', file);
+    formData.attachments?.forEach((file) => {
+      fd.append('attachments', file);
     });
 
-    // 6. 게시글 저장
     try {
       let res;
-
       if (mode === 'write') {
-        res = await axiosInstance.post('/posts', formData, {
+        res = await axiosInstance.post('/posts', fd, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
       } else {
         const postId = initialData?.id;
-        res = await axiosInstance.put(`/posts/${postId}`, formData, {
+        res = await axiosInstance.put(`/posts/${postId}`, fd, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
       }
@@ -106,10 +105,10 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
                 ? '게시글이 성공적으로 등록되었습니다.'
                 : '게시글이 성공적으로 수정되었습니다.',
             type: 'success',
-            duration: 4000, // ✅ 상세 페이지로 이동 후에도 4초 유지
+            duration: 4000,
           }),
         );
-        navigate(`/posts/${postId}`); // ✅ 신규 상세페이지로 이동
+        navigate(`/posts/${postId}`);
       } else {
         dispatch(
           showToast({
@@ -119,27 +118,40 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
         );
       }
     } catch (error) {
-      console.error('게시글 등록 실패', error);
+      console.error('게시글 저장 실패', error);
       dispatch(
         showToast({
-          message:
-            mode === 'write'
-              ? '게시글 등록에 실패했습니다. 다시 시도해주세요.'
-              : '게시글 수정에 실패했습니다. 다시 시도해주세요.',
+          message: mode === 'write' ? '게시글 등록에 실패했습니다.' : '게시글 수정에 실패했습니다.',
           type: 'error',
         }),
       );
-      // ✅ 머무르기 (navigate 없음)
     }
-  }; // handleSubmit end
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <CategorySelect value={categoryId} onChange={setCategoryId} />
-      <PostTitleInput value={title} onChange={setTitle} />
-      <PostContentEditor ref={editorRef} value={content} onChange={setContent} />
-      <PostTagInput value={tags} onChange={setTags} />
-      <AttachmentUploader files={attachments} onChange={setAttachments} />
+      <CategorySelect
+        value={formData.categoryId}
+        onChange={(val) => setFormData((prev) => ({ ...prev, categoryId: val }))}
+      />
+      <PostTitleInput
+        value={formData.title}
+        onChange={(val) => setFormData((prev) => ({ ...prev, title: val }))}
+      />
+      <PostContentEditor
+        ref={editorRef}
+        value={formData.content}
+        onChange={(val) => setFormData((prev) => ({ ...prev, content: val }))}
+      />
+      <PostTagInput
+        postId={mode === 'edit' ? initialData?.id : undefined}
+        value={formData.tags} // 이제 Tag[] 타입
+        onChange={(tags, deleteTagIds) => setFormData((prev) => ({ ...prev, tags, deleteTagIds }))}
+      />
+      <AttachmentUploader
+        files={formData.attachments || []}
+        onChange={(files) => setFormData((prev) => ({ ...prev, attachments: files }))}
+      />
       <FormActions />
     </form>
   );
