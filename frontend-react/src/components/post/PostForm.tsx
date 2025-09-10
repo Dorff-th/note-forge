@@ -8,6 +8,7 @@ import PostTitleInput from './PostTitleInput';
 import PostContentEditor from './PostContentEditor';
 import PostTagInput from './PostTagInput';
 import AttachmentUploader from './AttachmentUploader';
+import type { ExistingAttachment } from './AttachmentUploader';
 import FormActions from './FormActions';
 import { showToast } from '@/store/slices/toastSlice';
 import type { PostDetailDTO } from '@/types/Post';
@@ -33,6 +34,15 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
     deleteTagIds: [],
     attachments: [],
   });
+
+  // ✅ 수정 모드 전용: 기존 첨부파일 + 삭제대상
+  const [existingAttachments] = useState<ExistingAttachment[]>(
+    initialData?.attachments?.map((att) => ({
+      id: att.id,
+      originalName: att.originalName,
+    })) ?? [],
+  );
+  const [deleteIds, setDeleteIds] = useState<number[]>([]);
 
   // ✅ 최종 저장 핸들러
   const handleSubmit = async (e: React.FormEvent) => {
@@ -77,6 +87,10 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
 
     if (formData.deleteTagIds && formData.deleteTagIds.length > 0) {
       fd.append('deleteTagIds', formData.deleteTagIds.join(','));
+    }
+
+    if (deleteIds.length > 0) {
+      fd.append('deleteIds', deleteIds.join(',')); // ✅ 기존 첨부 삭제대상
     }
 
     formData.attachments?.forEach((file) => {
@@ -145,12 +159,15 @@ export default function PostForm({ mode, initialData }: PostFormProps) {
       />
       <PostTagInput
         postId={mode === 'edit' ? initialData?.id : undefined}
-        value={formData.tags} // 이제 Tag[] 타입
+        value={formData.tags}
         onChange={(tags, deleteTagIds) => setFormData((prev) => ({ ...prev, tags, deleteTagIds }))}
       />
       <AttachmentUploader
         files={formData.attachments || []}
         onChange={(files) => setFormData((prev) => ({ ...prev, attachments: files }))}
+        existingAttachments={existingAttachments}
+        deleteIds={deleteIds}
+        onDeleteIdsChange={setDeleteIds}
       />
       <FormActions />
     </form>
