@@ -14,6 +14,9 @@ public interface AttachmentRepository extends JpaRepository<Attachment, Long> {
     @Query("SELECT a FROM Attachment a WHERE a.post.id = :postId AND a.uploadType = :uploadType")
     List<Attachment> findByPostId(@Param("postId") Long postId, @Param("uploadType") UploadType uploadType);
 
-    //Post 삭제될때 하위 Attachment 모두 삭제
+    //Post 삭제될때 하위 Attachment 모두 삭제 - 관리자 기능
     void deleteByPostIdIn(List<Long> postIds);
+
+    //특정 Post 삭제될때 Attachment 삭제
+    void deleteByPostId(Long postId);
 }

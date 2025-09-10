@@ -9,6 +9,7 @@ import dev.noteforge.knowhub.attachment.repository.ImageUploadRepository;
 import dev.noteforge.knowhub.attachment.service.AttachmentService;
 import dev.noteforge.knowhub.attachment.util.FormatFileSize;
 import dev.noteforge.knowhub.attachment.util.GeneralFileUtil;
+import dev.noteforge.knowhub.comment.repository.CommentRepository;
 import dev.noteforge.knowhub.common.dto.PageRequestDTO;
 import dev.noteforge.knowhub.common.dto.PageResponseDTO;
 import dev.noteforge.knowhub.common.util.StringUtils;
@@ -63,6 +64,8 @@ public class PostService {
     private final PostTagRepository postTagRepository;
 
     private final AttachmentService attachmentService;
+
+    private final CommentRepository commentRepository;
 
     //post 페이징(목록)
     public PageResponseDTO<PostDTO> getPostList(PageRequestDTO requestDTO) {
@@ -254,6 +257,12 @@ public class PostService {
     //Post 삭제
     @Transactional
     public void deletePost(Long id) {
+
+        // 1. 하위 엔티티 먼저 삭제
+        commentRepository.deleteByPostId(id);
+        postTagRepository.deleteByPostId(id);
+        attachmentRepository.deleteByPostId(id);
+
         postRepository.deleteById(id);
     }
 

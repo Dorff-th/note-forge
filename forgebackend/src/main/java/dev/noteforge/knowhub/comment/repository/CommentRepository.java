@@ -28,6 +28,9 @@ public interface CommentRepository  extends JpaRepository<Comment, Long> {
         """)
     List<CommentResponseDTO> findAllByPostId(@Param("postId") Long postId);
 
-    //코멘트 일괄삭제 (Post가 삭제될때 하위 코멘트 모두 삭제)
+    //코멘트 일괄삭제 (Post가 삭제될때 하위 코멘트 모두 삭제) - 관리자 기능에서 사용
     void deleteByPostIdIn(List<Long> postIds);
+
+    // 특정 post 의 Comment 삭제(사용자 ROLE)
+    void deleteByPostId(Long postId);
 }

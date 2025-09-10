@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@store/index';
-import { fetchPostDetail, getPostTags } from '@/api/postApi';
+import { fetchPostDetail, getPostTags, deletePost } from '@/api/postApi';
 import type { PostDetailDTO } from '@/types/Post';
 import { Viewer } from '@toast-ui/react-editor';
+import { Button } from '@/components/ui/Button';
 import ConfirmModal from '@/components/common/ConfirmModal';
 import { withToast } from '@/utils/withToast';
 import UserComment from '@/components/user/UserComment';
@@ -14,6 +15,7 @@ import { backendBaseUrl } from '@/config';
 export default function PostDetail() {
   const { id } = useParams<{ id: string }>();
   const [post, setPost] = useState<PostDetailDTO | null>(null);
+  const [open, setOpen] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
   const navigate = useNavigate();
 
@@ -38,6 +40,17 @@ export default function PostDetail() {
   const isAuthor = isAuthenticated && currentUser?.id === post?.memberId;
 
   //todo 삭제 기능 구현
+  const handleDelete = async (id: number) => {
+    await withToast(
+      deletePost(id).then(() => navigate(`/posts`)),
+      { success: '삭제가 완료 되었습니다.' },
+    );
+  };
+
+  const handleConfirm = (id: number) => {
+    handleDelete(id); // ✅ 이제 여기서 실제 삭제 실행
+    setOpen(false);
+  };
 
   if (!post) return <div className="p-6">로딩중...</div>;
 
@@ -102,18 +115,22 @@ export default function PostDetail() {
           <div className="flex gap-2">
             <button
               onClick={() => navigate(`/posts/${post.id}/edit`)}
-              className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
+              className="px-4 py-2 rounded bg-blue-400 hover:bg-gray-300"
             >
               To Edit
             </button>
-            <button
-              onClick={() => setOpenConfirm(true)}
-              className="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600"
-            >
+            <Button variant="destructive" onClick={() => setOpen(true)}>
               삭제
-            </button>
+            </Button>
           </div>
         )}
+        <ConfirmModal
+          open={open}
+          title="게시물 삭제"
+          description={`정말로 "${post.title}" 게시물을 삭제하시겠습니까?`}
+          onConfirm={() => handleConfirm(post.id)}
+          onCancel={() => setOpen(false)}
+        />
       </div>
 
       {/* 댓글 관리 섹션 */}
