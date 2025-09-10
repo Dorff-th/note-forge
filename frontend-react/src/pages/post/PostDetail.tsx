@@ -34,6 +34,8 @@ export default function PostDetail() {
   }, [postId]);
 
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const currentUser = useSelector((state: RootState) => state.auth.user);
+  const isAuthor = isAuthenticated && currentUser?.id === post?.memberId;
 
   //todo 삭제 기능 구현
 
@@ -96,20 +98,22 @@ export default function PostDetail() {
           To List
         </button>
 
-        {isAuthenticated && (
-          <button
-            onClick={() => navigate(`/posts/${postId}/edit`)}
-            className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
-          >
-            To Edit
-          </button>
+        {isAuthor && (
+          <div className="flex gap-2">
+            <button
+              onClick={() => navigate(`/posts/${post.id}/edit`)}
+              className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
+            >
+              To Edit
+            </button>
+            <button
+              onClick={() => setOpenConfirm(true)}
+              className="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600"
+            >
+              삭제
+            </button>
+          </div>
         )}
-        {/* <button
-          onClick={() => setOpenConfirm(true)}
-          className="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600"
-        >
-          삭제
-        </button> */}
       </div>
 
       {/* 댓글 관리 섹션 */}

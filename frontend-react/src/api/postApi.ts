@@ -48,3 +48,9 @@ export const fetchPostsByTag = async (
   });
   return response.data;
 };
+
+//게시글 삭제
+export const deletePost = async (postId: number) => {
+  const res = await axiosInstance.delete(`/posts/${postId}`);
+  return res.data;
+};

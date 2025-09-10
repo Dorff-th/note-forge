@@ -107,6 +107,7 @@ public class PostService {
                     dto.setContent(post.getContent());
                     dto.setCategoryId(post.getCategoryId());
                     dto.setCategoryName(post.getCategoryName());
+                    dto.setMemberId(post.getMemberId());
                     dto.setUsername(post.getUsername());
                     dto.setNickname(post.getNickname());
                     dto.setCreatedAt(post.getCreatedAt());
