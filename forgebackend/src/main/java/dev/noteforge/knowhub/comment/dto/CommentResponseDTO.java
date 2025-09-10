@@ -1,5 +1,6 @@
 package dev.noteforge.knowhub.comment.dto;
 
+import dev.noteforge.knowhub.comment.domain.Comment;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -18,5 +19,18 @@ public class CommentResponseDTO {
     private String username;
     private String nickname;
     private String profileImageUrl;
+
+    public static CommentResponseDTO fromEntity(Comment comment) {
+        return CommentResponseDTO.builder()
+                .id(comment.getId())
+                .content(comment.getContent())
+                .createdAt(comment.getCreatedAt())
+                .postId(comment.getPost().getId())
+                .memberId(comment.getMember().getId())
+                .username(comment.getMember().getUsername())
+                .nickname(comment.getMember().getNickname())
+                .profileImageUrl(comment.getMember().getProfileImageUrl())
+                .build();
+    }
 
 }

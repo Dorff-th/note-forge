@@ -4,6 +4,7 @@ import dev.noteforge.knowhub.member.domain.Member;
 import dev.noteforge.knowhub.post.domain.Post;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -24,6 +25,7 @@ public class Comment {
     private String content;
 
     @Column(nullable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)

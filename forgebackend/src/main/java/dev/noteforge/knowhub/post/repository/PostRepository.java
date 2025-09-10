@@ -27,14 +27,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
      */
     @Query("SELECT new dev.noteforge.knowhub.post.dto.PostDTO(" +
             "p.id, p.title, p.createdAt, c.name, m.username, m.id, " +
-            "COUNT(cm.id), m.nickname, " +
-            "COUNT(CASE WHEN a.uploadType = 'ATTACHMENT' THEN a.id END)) " +
+            "(SELECT COUNT(cm) FROM Comment cm WHERE cm.post.id = p.id), " +
+            "m.nickname, " +
+            "(SELECT COUNT(a) FROM Attachment a WHERE a.post.id = p.id AND a.uploadType = 'ATTACHMENT')" +
+            ") " +
             "FROM Post p " +
             "LEFT JOIN p.category c " +
             "LEFT JOIN p.member m " +
-            "LEFT JOIN p.comments cm " +
-            "LEFT JOIN p.attachments a " +
-            "GROUP BY p.id, p.title, p.createdAt, c.name, m.username, m.id, m.nickname " +
             "ORDER BY p.id DESC")
     Page<PostDTO> findAllPosts(Pageable pageable);
 

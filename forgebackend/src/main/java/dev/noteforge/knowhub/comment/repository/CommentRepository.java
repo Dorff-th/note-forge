@@ -33,4 +33,7 @@ public interface CommentRepository  extends JpaRepository<Comment, Long> {
 
     // 특정 post 의 Comment 삭제(사용자 ROLE)
     void deleteByPostId(Long postId);
+
+    // 댓글 삭제할 때, postId + commentId 조건으로 존재여부 확인 가능
+    boolean existsByIdAndPostId(Long id, Long postId);
 }

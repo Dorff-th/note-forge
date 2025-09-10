@@ -55,7 +55,7 @@ public class PostController {
     /**
      * 게시글 상세 조회
      */
-    @GetMapping("/{id}")
+    @GetMapping("/{id:\\d+}")
     public ResponseEntity<PostDetailDTO> getPost(@PathVariable("id") Long id) {
 
         Optional<PostDetailDTO> resultDTO = postService.getPost(id);
